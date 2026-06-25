@@ -43,6 +43,16 @@ shown; write the free-text content (especially the emotional summary) in the sam
 |---|--------|--------|---------|-------|
 | 1 | ...    | ...    | High/Medium/Low | Yes/No |
 
+## Per-screen detail
+<One block per screen, in order. This is the window-by-window record — what the user thought, what
+they doubted, what they felt, and how their accumulated memory grows. Include EVERY step.>
+
+### Step <n> — <screen name>
+- **Action & thinking:** <what they did and the reasoning behind it, first person>
+- **Clarity:** High/Medium/Low · **Doubt:** Yes/No · **Time:** <n>s
+- **Emotional state:** <their emotional reaction to THIS screen>
+- **Accumulated memory:** <their running first-person memory at this point — show how it shifts vs. the previous step>
+
 ## Synthesis
 - **Highest friction point:** <screen and why>
 - **Highest emotional friction point:** <screen and why>
@@ -66,4 +76,8 @@ shown; write the free-text content (especially the emotional summary) in the sam
 5. Write the free-text content in the same language as the profile.
 6. If the run stopped because of the **step cap**, say so explicitly as a possible signal of a flow
    that's too long or a path that's unclear (not as a failure of the method).
+7. **"Per-screen detail" is mandatory and faithful** (framework §9 / §10.1.C): include every step in
+   order, each with its action+reasoning, clarity, doubt, emotional state, and accumulated memory.
+   It's the window-by-window record — show how the accumulated memory evolves step to step; never
+   compress it away into the synthesis.
 ```

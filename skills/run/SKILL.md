@@ -43,20 +43,24 @@ If any of the three is missing, ask for it before continuing. Do not invent any.
 
 ---
 
-## Step 0 — First-run setup check
+## Step 0 — Preflight checks (HARD STOP — do these before ANYTHING else)
 
-Before anything else, run through the following checks **in order**. If a check fails,
-show the relevant setup instructions and **stop**. Do not continue to the simulation
-until the user confirms all checks pass.
+These checks gate the entire skill. Until BOTH pass, you must NOT open the app, navigate, take
+screenshots, spawn subagents, or evaluate any screen. **Running the simulation without a confirmed
+profile is a failure.** Never start "reviewing" the app on your own initiative, and never substitute
+a default, example, or invented profile.
 
-### 0a. Chrome extension check
+Run the checks in order. If either fails, show its block and **STOP** — wait for the user to come
+back. Do not continue past a failed check under any circumstances, even if the user just said "run".
+
+### 0a. Browser connected?
 
 Load and call `mcp__Claude_in_Chrome__list_connected_browsers` (via ToolSearch
 `select:mcp__Claude_in_Chrome__list_connected_browsers`).
 
 If it returns `[]`:
 
-> **Setup needed — Chrome extension**
+> **⚠️ Setup needed — Chrome extension**
 >
 > The simulator needs the **Claude in Chrome** extension to see and interact with the browser.
 >
@@ -65,27 +69,33 @@ If it returns `[]`:
 > 3. Click the extension icon and connect it to this session
 > 4. Once connected, tell me and I'll continue.
 
-Stop here until the user confirms. Do not proceed without a connected browser.
+**STOP here.** Do not proceed without a connected browser.
 
-### 0b. Profile check
+### 0b. Profile available?
 
-Look for a `profiles/` folder in the current working directory.
-- If the folder exists and contains at least one `.md` file → proceed to Step 1.
-- If the folder is missing or empty:
+A synthetic user profile is **required** — it's the user you act as; with no profile there is
+literally nothing to simulate. A profile counts as available ONLY if one of these is true:
 
-> **Setup needed — Synthetic user profile**
+- there is at least one `.md` file inside a `profiles/` folder in the current working directory, **or**
+- the user gave you a file path to a profile `.md`, **or**
+- the user pasted a full profile into the chat.
+
+**Actually check** — list the `profiles/` folder; don't assume. If none of the three is true,
+**STOP immediately** and show exactly this. Do not open the app, do not start any step, and do not
+invent or reuse an example profile:
+
+> **🛑 I can't run yet — there's no synthetic user profile.**
 >
-> A profile defines how your synthetic user thinks, behaves, and decides when to give up.
-> Without one, the simulation can't run.
+> A profile is the user I'm supposed to act as. Without one there's nothing to simulate, so I'm
+> stopping here on purpose.
 >
-> **Create your first profile:**
-> 1. Go to **https://synthetic.tuggsy.com/**
-> 2. Fill in the profile builder (role, goals, behavior rules, ambiguity tolerance)
-> 3. Download the generated `.md` file
-> 4. Drop it in a `profiles/` folder in this directory
-> 5. Tell me the profile name and the URL + task you want to test — I'll kick off the simulation.
+> **Do this first:**
+> 1. Create a profile at **https://synthetic.tuggsy.com/**
+> 2. Download the `.md` and drop it into a **`profiles/`** folder in this project
+>    *(or paste it here in the chat, or give me the file path).*
+> 3. Tell me when it's ready — then I'll ask for the app URL and the task, and start.
 
-Stop here until the user provides a profile.
+Wait for the user. Only continue once a real profile is in hand.
 
 ---
 
@@ -147,6 +157,10 @@ Spawn the `flow-analysis` subagent (`subagent_type: "flow-analysis"`) passing th
 
 ## Orchestrator rules
 
+- **Profile + browser first, no exceptions.** Never open the app, navigate, screenshot, spawn a
+  subagent, or evaluate a screen until Step 0 has passed — a real profile is in hand AND the browser
+  is connected. If the user says "just run it" without a profile, STOP and ask; do not improvise,
+  default to, or reuse an example profile.
 - **Don't steer the path.** You only execute the intent the simulator declared. Don't choose
   what to click "to move forward."
 - **Don't give the simulator extra context.** It only receives profile + current screen + its memory.

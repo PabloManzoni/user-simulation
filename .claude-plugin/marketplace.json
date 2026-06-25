@@ -1,0 +1,18 @@
+{
+  "name": "pablom-plugins",
+  "owner": {
+    "name": "Pablo Manzoni",
+    "email": "pablom@kzsoftworks.com"
+  },
+  "description": "Plugins for UX research and testing by Pablo Manzoni (Kaizen Softworks).",
+  "plugins": [
+    {
+      "name": "user-simulation",
+      "source": "./",
+      "description": "Run a synthetic user over a live web app and get a step-by-step UX report.",
+      "author": {
+        "name": "Pablo Manzoni"
+      }
+    }
+  ]
+}

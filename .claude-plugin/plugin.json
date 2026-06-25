@@ -1,0 +1,14 @@
+{
+  "name": "user-simulation",
+  "displayName": "User Simulation",
+  "version": "1.0.0",
+  "description": "Run a synthetic user over a live web app and get a step-by-step UX report (action, clarity, doubt, emotion). App-agnostic: points at any web app by URL.",
+  "author": {
+    "name": "Pablo Manzoni",
+    "email": "pablom@kzsoftworks.com"
+  },
+  "repository": "https://github.com/PabloManzoni/user-simulation",
+  "homepage": "https://github.com/PabloManzoni/user-simulation",
+  "license": "MIT",
+  "keywords": ["ux", "usability", "user-testing", "synthetic-user", "simulation"]
+}

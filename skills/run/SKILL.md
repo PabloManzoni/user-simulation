@@ -125,7 +125,7 @@ Repeat until a stop condition is met. Each iteration:
        - the **visible content** of the screen (from step a)
        - the **memory** from the previous step (omit on step 1)
      The subagent returns ONLY a JSON:
-     `{ action, clarityLevel, doubtDetected, reason, abandoned, estimatedTimeSeconds, memory }`.
+     `{ action, clarityLevel, doubtDetected, reason, abandoned, estimatedTimeSeconds, emotionalState, memory }`.
 
   **c. Record** the step (number, screen, screenshot, and the full returned JSON).
 

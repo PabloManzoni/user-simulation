@@ -1,7 +1,7 @@
 {
   "name": "user-simulation",
   "displayName": "User Simulation",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Run a synthetic user over a live web app and get a step-by-step UX report (action, clarity, doubt, emotion). App-agnostic: points at any web app by URL.",
   "author": {
     "name": "Pablo Manzoni",

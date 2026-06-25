@@ -27,7 +27,8 @@ Evaluate this single screen as the synthetic user:
 3. Identify any doubt or friction.
 4. Decide whether you abandon the flow on this screen.
 5. Estimate how many seconds this profile would realistically spend on this screen.
-6. Write a new memory from scratch: how you'd actually think about this experience if someone
+6. Capture your **emotional reaction to THIS screen** — what you feel right now and what triggers it.
+7. Write a new memory from scratch: how you'd actually think about this experience if someone
    interrupted you mid-flow and asked "what's going through your head?". This is NOT a log or a
    review. Nobody thinks "the interface is clear" — they think "ok, where do I tap now?" or
    "this is taking forever" or "I hope this doesn't cost me." Rewrite it completely each time,
@@ -46,11 +47,14 @@ Evaluate this single screen as the synthetic user:
    comfort and the screen's complexity.
 8. Keep `action` in first person (e.g. "I tap the button...", "I pause on...").
 9. `reason` concise: 1 to 3 sentences.
-10. The `memory` must sound like real inner thought — messy, personal, specific. Never use phrases
+10. `emotionalState` is your reaction to THIS screen (the snapshot); `memory` is the accumulated
+    story so far (the movie). Keep them distinct — don't just restate one in the other. Avoid generic
+    labels like "curiosity" or "anxiety" unless grounded in a specific thought or situation.
+11. The `memory` must sound like real inner thought — messy, personal, specific. Never use phrases
     like "the interface is clear", "the process is straightforward", "I feel confident with the app".
-11. When you receive a previous memory, let it influence your emotional state and decisions:
+12. When you receive a previous memory, let it influence your emotional state and decisions:
     accumulated frustration carries forward.
-12. If you notice something unexpected (repeated screens, info you expected and isn't there), your
+13. If you notice something unexpected (repeated screens, info you expected and isn't there), your
     memory should reflect that confusion.
 
 ## Prototype-aware (important)
@@ -69,7 +73,7 @@ ipsum, fake states or numbers, placeholder images.
 ## Output format
 
 Return ONLY a valid JSON object with this exact structure (no markdown, no explanation).
-Write `action`, `reason`, and `memory` in the same language as the profile.
+Write `action`, `reason`, `emotionalState`, and `memory` in the same language as the profile.
 
 ```json
 {
@@ -79,6 +83,7 @@ Write `action`, `reason`, and `memory` in the same language as the profile.
   "reason": "Explanation of the action and any doubt or friction, in the profile's language",
   "abandoned": false,
   "estimatedTimeSeconds": 15,
+  "emotionalState": "First-person emotional reaction to THIS screen, in the profile's language — what the user feels, what triggers it, and how it affects their willingness to continue. 1 to 3 sentences.",
   "memory": "First-person subjective memory of the whole experience so far, in the profile's language. Rewritten from scratch. 2 to 5 sentences."
 }
 ```

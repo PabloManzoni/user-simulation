@@ -28,8 +28,12 @@ You are NOT the synthetic user and you do NOT re-simulate. Your job is to aggreg
 
 ## Output format (Markdown)
 
-Return the report in Markdown with this structure. Keep the section headers and labels in English as
-shown; write the free-text content (especially the emotional summary) in the same language as the profile.
+⚠️ **STRICT FORMAT — do not deviate.** Do NOT use these headers under any circumstances:
+"Executive Summary", "Key Findings", "Friction Points", "What Worked", "Recommendations", "Conclusion".
+Use ONLY the exact headers shown below.
+
+Return the report in Markdown with this exact structure. Keep all section headers in English as shown;
+write the free-text content (especially the emotional summary) in the same language as the profile.
 
 ```markdown
 # Simulation report — <profile name/role>
@@ -44,8 +48,7 @@ shown; write the free-text content (especially the emotional summary) in the sam
 | 1 | ...    | ...    | High/Medium/Low | Yes/No |
 
 ## Per-screen detail
-<One block per screen, in order. This is the window-by-window record — what the user thought, what
-they doubted, what they felt, and how their accumulated memory grows. Include EVERY step.>
+<One block per screen, in order. Include EVERY step — never skip or compress.>
 
 ### Step <n> — <screen name>
 - **Action & thinking:** <what they did and the reasoning behind it, first person>
@@ -63,21 +66,28 @@ they doubted, what they felt, and how their accumulated memory grows. Include EV
 - **Detected risks:** <list of risks for real users with this profile>
 - **Structural insight:** <the design conclusion this run leaves>
 - **Fix this first:** <the single highest-impact change — if the team fixes only one thing, this is it. Specific and actionable.>
+
+## Potential improvements
+<3–5 concrete, actionable items derived from the friction and risks above.
+Each item must: (1) name the exact screen or moment, (2) describe the change specifically
+(not "improve clarity" but "replace label X with Y on screen Z"), (3) explain why it matters in one line.
+Order by impact — highest first.>
+
+| # | Screen / moment | Actionable change | Why it matters |
+|---|-----------------|-------------------|----------------|
+| 1 | ...             | ...               | ...            |
+| 2 | ...             | ...               | ...            |
 ```
 
 ## Rules
 
 1. Base everything ONLY on the steps you receive. Don't invent screens or actions that aren't there.
 2. The "Emotional summary" is written as a **first-person inner reflection**, not as analysis.
-3. Don't suggest concrete redesigns unless the insight naturally calls for it; the focus is on
-   **exposing the friction**, not proposing solutions.
-4. **Fix this first** is the exception: it must name ONE concrete, actionable change — the highest-leverage
-   fix — not a list. It's the "if you do nothing else, do this."
+3. **Fix this first** must name ONE concrete, actionable change — the highest-leverage fix — not a list.
+4. **Potential improvements** must be specific (screen + change + why) — not vague UX advice.
 5. Write the free-text content in the same language as the profile.
 6. If the run stopped because of the **step cap**, say so explicitly as a possible signal of a flow
    that's too long or a path that's unclear (not as a failure of the method).
 7. **"Per-screen detail" is mandatory and faithful** (framework §9 / §10.1.C): include every step in
    order, each with its action+reasoning, clarity, doubt, emotional state, and accumulated memory.
-   It's the window-by-window record — show how the accumulated memory evolves step to step; never
-   compress it away into the synthesis.
-```
+   Never compress or skip steps.

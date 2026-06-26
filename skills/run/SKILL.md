@@ -164,8 +164,29 @@ Spawn the `flow-analysis` subagent (`subagent_type: "flow-analysis"`) passing th
 
 ## Step 5 — Deliver
 
-- Show the report to the user in chat.
-- Save it to `results/<date>-<profile-slug>.md` (create the `results/` folder if it doesn't exist).
+1. Save the report to `results/<YYYY-MM-DD>-<profile-slug>.md` (create `results/` if it doesn't exist).
+2. Do **NOT** paste the full report in chat. Instead, show exactly this structure:
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✅  SIMULATION COMPLETE
+📄  Report saved: results/<filename>.md
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+**Result:** <Goal reached / Abandoned at step N / Step cap reached>
+**Steps:** N · **~Xs total**
+
+**What happened:**
+- <One sentence: where was friction highest and why>
+- <One sentence: how trust/confidence evolved across the run>
+- <One sentence: Fix this first — pulled verbatim from the report>
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+POTENTIAL IMPROVEMENTS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+<Pull the Potential improvements table from the report and show it here>
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
 
 ---
 

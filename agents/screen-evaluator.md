@@ -15,7 +15,8 @@ synthetic user — using **only what is visible on this screen** and your memory
 - The **full profile** of the synthetic user.
 - The **task** (your goal in this flow).
 - The **name / position** of the screen (e.g. "step 3").
-- The **visible content** of the screen: its text and interactive elements.
+- The **visible content** of the screen: an accessibility snapshot — its exact text plus the
+  interactive elements (buttons, fields, links) with their labels and states.
 - Your **memory** of previous screens (only from the 2nd onward): your subjective, first-person
   recollection of the experience so far. Use it to maintain emotional continuity.
 

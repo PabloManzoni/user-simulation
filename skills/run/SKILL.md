@@ -14,6 +14,10 @@ Each screen decision is made by a **simulator subagent** with clean context, and
 the final report is built by a **synthesis subagent**. You never choose the path —
 you only mechanically execute the intent the simulator already declared.
 
+The browser is driven through the **Playwright MCP** server: you perceive each screen with an
+accessibility **snapshot** (exact text, roles, states, and a `ref` per element) and act on elements
+by their `ref` — not by pixel coordinates.
+
 ---
 
 ## On launch — show this to the user FIRST
@@ -24,7 +28,8 @@ then run the Step 0 checks to see how far along the user already is and guide th
 > **🧪 User Simulation — quick start**
 > Run a synthetic user through your live web app and get a UX report.
 >
-> **1. Connect the browser** — install **Claude in Chrome** from the Chrome Web Store and connect it.
+> **1. Set up the browser (one time)** — add the Playwright MCP server, then restart Claude Code:
+>    `claude mcp add playwright -- npx @playwright/mcp@latest`
 > **2. Get a profile** — build your synthetic user at **https://synthetic.tuggsy.com/**, download the `.md`, and drop it into `profiles/`.
 > **3. Tell me 3 things** — the profile, the app URL, and the task to test (e.g. *"create a raffle and pick a winner"*).
 >
@@ -45,31 +50,30 @@ If any of the three is missing, ask for it before continuing. Do not invent any.
 
 ## Step 0 — Preflight checks (HARD STOP — do these before ANYTHING else)
 
-These checks gate the entire skill. Until BOTH pass, you must NOT open the app, navigate, take
-screenshots, spawn subagents, or evaluate any screen. **Running the simulation without a confirmed
+These checks gate the entire skill. Until BOTH pass, you must NOT open the app, navigate, capture
+snapshots, spawn subagents, or evaluate any screen. **Running the simulation without a confirmed
 profile is a failure.** Never start "reviewing" the app on your own initiative, and never substitute
 a default, example, or invented profile.
 
 Run the checks in order. If either fails, show its block and **STOP** — wait for the user to come
 back. Do not continue past a failed check under any circumstances, even if the user just said "run".
 
-### 0a. Browser connected?
+### 0a. Playwright browser available?
 
-Load and call `mcp__Claude_in_Chrome__list_connected_browsers` (via ToolSearch
-`select:mcp__Claude_in_Chrome__list_connected_browsers`).
+The simulator drives the browser through the **Playwright MCP** server. Check it's available: try to
+load its tools via ToolSearch `select:mcp__playwright__browser_navigate,mcp__playwright__browser_snapshot`.
 
-If it returns `[]`:
+If the tools are NOT found (the server isn't configured, or this session started before it was added):
 
-> **⚠️ Setup needed — Chrome extension**
+> **⚠️ Setup needed — Playwright browser**
 >
-> The simulator needs the **Claude in Chrome** extension to see and interact with the browser.
+> The simulator drives the browser through the **Playwright MCP** server, which isn't available yet.
 >
-> 1. Open Chrome and go to the Chrome Web Store
-> 2. Search for **"Claude in Chrome"** and install it
-> 3. Click the extension icon and connect it to this session
-> 4. Once connected, tell me and I'll continue.
+> 1. In your terminal, run: `claude mcp add playwright -- npx @playwright/mcp@latest`
+> 2. **Restart Claude Code** — MCP tools only load when the session starts.
+> 3. Tell me when it's back and I'll continue.
 
-**STOP here.** Do not proceed without a connected browser.
+**STOP here.** Do not proceed without Playwright available.
 
 ### 0b. Profile available?
 
@@ -107,27 +111,31 @@ Wait for the user. Only continue once a real profile is in hand.
 
 ## Step 2 — Open the app
 
-Load the Claude in Chrome tools you'll need (navigate, screenshot,
-get_page_text or read_page, find, computer/click) via ToolSearch. Navigate to the URL.
+Load the Playwright tools you'll need via ToolSearch (select these by name):
+`mcp__playwright__browser_navigate`, `browser_snapshot`, `browser_click`, `browser_type`,
+`browser_press_key`, `browser_wait_for`, `browser_take_screenshot`.
+Then `browser_navigate` to the URL.
 
 ## Step 3 — Step-by-step loop
 
 Repeat until a stop condition is met. Each iteration:
 
-  **a. Perceive**: take a screenshot (stays in the step record) and extract the **visible content**
-     of the current screen (text and interactive elements) with get_page_text/read_page.
+  **a. Perceive**: capture a `browser_snapshot` — the accessibility tree with exact text, element
+     roles, states (e.g. `[disabled]`, `[checked]`), and a `ref` for each element. This IS the
+     screen's visible content. Optionally also `browser_take_screenshot` when visual layout matters
+     as report evidence; the snapshot alone is enough to decide and act.
 
   **b. Decide**: spawn the `screen-evaluator` subagent (Agent tool, `subagent_type: "screen-evaluator"`)
      passing, as text:
        - the **full profile**
        - the **task** (the goal)
        - the **screen name/position** (e.g. "Current screen, step N")
-       - the **visible content** of the screen (from step a)
+       - the **visible content** of the screen (the snapshot from step a, as readable text)
        - the **memory** from the previous step (omit on step 1)
      The subagent returns ONLY a JSON:
      `{ action, clarityLevel, doubtDetected, reason, abandoned, estimatedTimeSeconds, emotionalState, memory }`.
 
-  **c. Record** the step (number, screen, screenshot, and the full returned JSON).
+  **c. Record** the step (number, screen, snapshot, and the full returned JSON).
 
   **d. Check stop conditions** (in this order):
        - `abandoned == true` → stop (the user gives up here).
@@ -136,10 +144,16 @@ Repeat until a stop condition is met. Each iteration:
        - step count `>= cap` → stop as safety net (mark as "cap reached").
      If stopped, exit the loop.
 
-  **e. Execute**: translate the declared `action` into a real Chrome action (click the element
-     the simulator named, type in a field, etc.) as faithfully as possible. If the element it
-     named **doesn't exist**, do not fix it or look for alternatives — let the next step perceive
-     it as real friction.
+  **e. Execute**: translate the declared `action` into a real Playwright action, using the `ref` from
+     the current snapshot:
+       - click → `browser_click` (`target` = the element's `ref`; `element` = a human-readable description)
+       - type → `browser_type` (`target` = ref, `text`, and `submit: true` to press Enter after)
+       - press a key → `browser_press_key`
+     For anything that **animates or loads** (spinners, transitions, async results), use
+     `browser_wait_for` (wait for the expected text to appear, or `textGone` for it to disappear) —
+     wait for the *signal*, not a guessed number of seconds. If the element the simulator named
+     **doesn't exist** in the snapshot, do not fix it or look for alternatives — let the next step
+     perceive it as real friction.
 
   **f. Pass memory**: `memory = memory` returned. Goes to the next step.
 
@@ -157,12 +171,14 @@ Spawn the `flow-analysis` subagent (`subagent_type: "flow-analysis"`) passing th
 
 ## Orchestrator rules
 
-- **Profile + browser first, no exceptions.** Never open the app, navigate, screenshot, spawn a
-  subagent, or evaluate a screen until Step 0 has passed — a real profile is in hand AND the browser
-  is connected. If the user says "just run it" without a profile, STOP and ask; do not improvise,
+- **Profile + Playwright first, no exceptions.** Never open the app, navigate, snapshot, spawn a
+  subagent, or evaluate a screen until Step 0 has passed — a real profile is in hand AND Playwright
+  is available. If the user says "just run it" without a profile, STOP and ask; do not improvise,
   default to, or reuse an example profile.
 - **Don't steer the path.** You only execute the intent the simulator declared. Don't choose
   what to click "to move forward."
+- **Act by `ref`, not by guessing.** Always click/type using the `ref` from the latest snapshot.
+  Re-snapshot after each action so refs are fresh.
 - **Don't give the simulator extra context.** It only receives profile + current screen + its memory.
   None of your knowledge about the project, framework, or future screens.
 - **Prototype-aware**: the simulator already distinguishes dummy data noise from flow friction — don't

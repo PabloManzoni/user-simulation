@@ -11,13 +11,19 @@ best-case walkthrough.
 ## What you need
 
 - **Claude Code** — this plugin runs inside it.
-- **Claude in Chrome** extension — so the simulator can see and click your app. Install it from the
-  Chrome Web Store and connect it.
+- **Playwright MCP** — so the simulator can drive the browser (no Chrome extension needed). One-time
+  setup, see Install below.
 - **A synthetic user profile** (`.md`) — build one in a couple of minutes at
   **https://synthetic.tuggsy.com/**, download it, and drop it into a `profiles/` folder.
 
 ## Install
 
+**1. Add the Playwright MCP server** (one time), then restart Claude Code:
+```
+claude mcp add playwright -- npx @playwright/mcp@latest
+```
+
+**2. Install the plugin:**
 ```
 /plugin marketplace add PabloManzoni/user-simulation
 /plugin install user-simulation@pablom-plugins
@@ -44,7 +50,9 @@ a first-person emotional summary, detected risks, and a structural design insigh
 
 ## How it works
 
-- An **orchestrator** (the skill) drives the browser and runs a *perceive → decide → execute* loop.
+- An **orchestrator** (the skill) drives the browser via **Playwright MCP** and runs a
+  *perceive → decide → execute* loop. It perceives each screen as an accessibility **snapshot**
+  (text + roles + states) and acts on elements by reference — robust, no pixel-guessing.
 - A **screen-evaluator** subagent reacts to ONE screen at a time, in character, using only what's
   visible — this isolation is what keeps it from "compensating" for bad design.
 - A **flow-analysis** subagent reads the whole run and writes the report.

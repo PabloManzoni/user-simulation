@@ -11,17 +11,27 @@ best-case walkthrough.
 ## Requirements
 
 - **Claude Code** — this plugin runs inside it.
-- **Playwright MCP** — the browser driver. A one-time install; no Chrome extension needed.
+- **Google Chrome** — required. Playwright MCP drives your installed Chrome by default, so Chrome
+  must be present on the machine. (No Chrome extension needed.)
+- **Playwright MCP** — the browser driver. A one-time install (see below).
 - **A synthetic user profile** (`.md`) — build one at **https://synthetic.tuggsy.com/**, download
   it, and drop it into a `profiles/` folder in your project.
 
 ## Install
 
-**Step 1 — Install the Playwright browser driver** (once, in your terminal), then restart Claude Code:
+**Step 1 — Install the Playwright browser driver** (once, in your terminal):
 
 ```
 claude mcp add playwright -- npx @playwright/mcp@latest
 ```
+
+Then install the browser (Chrome/Chromium) that Playwright uses:
+
+```
+npx playwright install chromium
+```
+
+Then restart Claude Code.
 
 **Step 2 — Add the plugin source:**
 

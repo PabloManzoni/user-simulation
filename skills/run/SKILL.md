@@ -20,16 +20,22 @@ by their `ref` — not by pixel coordinates.
 
 ---
 
-## On launch — show this to the user FIRST
+## On launch — run Step 0 checks silently first
 
-The moment this skill is invoked, print the quick start below **verbatim** (don't expand it),
-then run the Step 0 checks to see how far along the user already is and guide them from there.
+Run the Step 0 checks immediately. Do NOT print the quick start unless a check fails.
+If both checks pass and the user already provided the 3 required inputs, start the simulation directly.
+If both checks pass but inputs are missing, ask for the missing ones only (profile / URL / task).
+Only show the quick start block below when a preflight check fails and the user needs setup guidance.
 
 > **🧪 User Simulation — quick start**
 > Run a synthetic user through your live web app and get a UX report.
 >
-> **1. Set up the browser (one time)** — add the Playwright MCP server, then restart Claude Code:
->    `claude mcp add playwright -- npx @playwright/mcp@latest`
+> **1. Set up the browser (one time):**
+>    ```
+>    claude mcp add playwright -- npx @playwright/mcp@latest
+>    npx playwright install chromium
+>    ```
+>    Then restart Claude Code and run `/reload-plugins`.
 > **2. Get a profile** — build your synthetic user at **https://synthetic.tuggsy.com/**, download the `.md`, and drop it into `profiles/`.
 > **3. Tell me 3 things** — the profile, the app URL, and the task to test (e.g. *"create a raffle and pick a winner"*).
 >

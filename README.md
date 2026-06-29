@@ -35,7 +35,13 @@ claude mcp add playwright -- npx @playwright/mcp@latest
 /plugin install user-simulation@pablom-plugins
 ```
 
-> To update later: `/plugin uninstall user-simulation` then repeat Step 3.
+**Step 4 — Reload plugins in Claude Code:**
+
+```
+/reload-plugins
+```
+
+> To update later: `/plugin uninstall user-simulation` then repeat Steps 3–4.
 
 ## Use
 

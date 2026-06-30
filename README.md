@@ -48,7 +48,7 @@ npx playwright install chromium
 
 ## Use
 
-1. Put your profile `.md` in a `profiles/` folder in your project.
+1. Put your profile `.md` in a `profiles/` folder in your project — or drag and drop it directly into the Claude Code chat.
 2. Make sure your web app is running (e.g. `http://localhost:5173`).
 3. Run:
    ```

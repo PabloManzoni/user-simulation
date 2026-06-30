@@ -19,37 +19,32 @@ best-case walkthrough.
 
 ## Install
 
-**Step 1 — Install the Playwright browser driver** (once, in your terminal):
+**Step 1 — In your terminal:** install the Playwright MCP server and its browser:
 
 ```
 claude mcp add playwright -- npx @playwright/mcp@latest
-```
-
-Then install the browser (Chrome/Chromium) that Playwright uses:
-
-```
 npx playwright install chromium
 ```
 
-**Step 2 — Add the plugin source:**
+**Step 2 — In Claude Code:** add the plugin source:
 
 ```
 /plugin marketplace add PabloManzoni/user-simulation
 ```
 
-**Step 3 — Install the plugin:**
+**Step 3 — In Claude Code:** install the plugin:
 
 ```
 /plugin install user-simulation@pablom-plugins
 ```
 
-**Step 4 — Reload plugins in Claude Code:**
+**Step 4 — In Claude Code:** reload plugins:
 
 ```
 /reload-plugins
 ```
 
-> To update later: `/plugin uninstall user-simulation` then repeat Steps 3–4.
+> To update later: run `/plugin uninstall user-simulation` in Claude Code, then repeat Steps 3–4.
 
 ## Use
 

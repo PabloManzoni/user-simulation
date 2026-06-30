@@ -31,8 +31,6 @@ Then install the browser (Chrome/Chromium) that Playwright uses:
 npx playwright install chromium
 ```
 
-Then restart Claude Code.
-
 **Step 2 — Add the plugin source:**
 
 ```

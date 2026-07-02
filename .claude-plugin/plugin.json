@@ -1,7 +1,7 @@
 {
   "name": "user-simulation",
   "displayName": "User Simulation",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Run synthetic users over a live web app and get step-by-step UX reports (action, clarity, doubt, emotion). Two modes: run (a single run, more manual control — your profile, URL and task) and autopilot (an automatic multi-user run, less manual control — just a URL, it proposes users for you to curate, runs them all and consolidates). Drives the browser via Playwright MCP.",
   "author": {
     "name": "Pablo Manzoni",
@@ -10,5 +10,11 @@
   "repository": "https://github.com/PabloManzoni/user-simulation",
   "homepage": "https://github.com/PabloManzoni/user-simulation",
   "license": "MIT",
-  "keywords": ["ux", "usability", "user-testing", "synthetic-user", "simulation"]
+  "keywords": [
+    "ux",
+    "usability",
+    "user-testing",
+    "synthetic-user",
+    "simulation"
+  ]
 }

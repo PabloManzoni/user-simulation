@@ -58,10 +58,10 @@ npx playwright install chromium
 > `/plugin marketplace update pablom-plugins`, then `/plugin uninstall user-simulation`, and repeat
 > Steps 3–4. (In the desktop app you can also just press **Update** on the plugin's settings page.)
 
-## Manual mode — run
+## Manual mode — run *(a single run, more control)*
 
-**You already know who you want to test.** You bring the profile, the URL and the task — a single
-run, full control over what gets tested.
+**You already know who you want to test.** You bring the profile, the URL and the task, and you
+define exactly what gets tested.
 
 ```
 /user-simulation:run
@@ -76,11 +76,10 @@ run, full control over what gets tested.
 It opens your app, walks through it screen by screen as that user, and saves a Markdown report to
 `results/`.
 
-## Automatic mode — autopilot
+## Automatic mode — autopilot *(an automatic multi-user run, less control)*
 
 **You don't know (or don't want to define) your users yet.** Give it just the URL: based on your
-site, it infers who likely uses it and lets you choose — and edit — which ones to run. Automatic
-multi-user, near-zero effort.
+site, it infers who likely uses it and lets you choose — and edit — which ones to run.
 
 ```
 /user-simulation:autopilot

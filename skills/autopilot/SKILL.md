@@ -1,11 +1,11 @@
 ---
-name: discover
-description: Discovers synthetic users for a live web app from a URL: researches the business, proposes users + tasks for human approval, generates builder-compatible profiles, then runs one simulation per user and consolidates findings. Use when the user wants an automatic multi-user UX evaluation from a URL, or types /user-simulation:discover.
+name: autopilot
+description: Autopilot mode — discovers synthetic users for a live web app from just a URL: researches the business, proposes users + tasks for human approval, generates builder-compatible profiles, then runs one simulation per user and consolidates findings. Use when the user wants an automatic multi-user UX evaluation from a URL, or types /user-simulation:autopilot.
 ---
 
-# Discover — automatic multi-user simulation
+# Autopilot — automatic multi-user simulation
 
-You orchestrate the **discover mode**: from a **URL** (plus an optional short business description),
+You orchestrate the **autopilot mode**: from a **URL** (plus an optional short business description),
 you research the business, **propose** synthetic users with their tasks, let the human **curate** the
 proposal in chat, generate the approved profiles (builder-compatible), then run the standard
 simulation for each user×task pair and consolidate the findings.
@@ -46,7 +46,7 @@ If NOT found:
 
 ### 0b. URL provided?
 
-Discover needs the live app's URL. No profile is required — this mode creates them. If the URL is
+Autopilot needs the live app's URL. No profile is required — this mode creates them. If the URL is
 missing, ask for it and STOP until provided.
 
 ---
@@ -75,7 +75,7 @@ research honestly supports, not a fixed number):
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-🔍  DISCOVERY PROPOSAL — <domain>
+🔍  AUTOPILOT PROPOSAL — <domain>
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 **What I understood:** <2-3 sentences: the business, its audience, where the evaluation value is>
@@ -188,7 +188,7 @@ Spawn the `synthetic-discovery-synthesizer` subagent (Agent tool, `subagent_type
   steps, timeSeconds, reportPath }`,
 - the instruction to Read each `reportPath` from disk.
 
-Save the returned report to `results/<YYYY-MM-DD>-discovery-<domain>.md` (same date as everything
+Save the returned report to `results/<YYYY-MM-DD>-autopilot-<domain>.md` (same date as everything
 else in this run; `<domain>` = host without TLD).
 
 ## Step 8 — Deliver
@@ -197,8 +197,8 @@ Do **NOT** paste any full report in chat. Show exactly this structure:
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-🔍✅  DISCOVERY COMPLETE — <domain>
-📄  Consolidated report: results/<YYYY-MM-DD>-discovery-<domain>.md
+🔍✅  AUTOPILOT COMPLETE — <domain>
+📄  Consolidated report: results/<YYYY-MM-DD>-autopilot-<domain>.md
 📄  Individual reports: results/<YYYY-MM-DD>-<slug>.md (×N)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -229,6 +229,6 @@ POTENTIAL IMPROVEMENTS (consolidated)
 - **Visible classification, always**: silent absorption of user context is a failure.
 - **Tasks never enter profiles.** The architect receives them as context only; the orchestrator
   keeps the user×task mapping.
-- **Same date for all artifacts** of one discover run.
+- **Same date for all artifacts** of one autopilot run.
 - Reuse, don't reimplement: the per-run loop belongs to the `run` skill; the profile
   format belongs to `vocabulary.md`; the report format belongs to `synthetic-flow-synthesizer`.

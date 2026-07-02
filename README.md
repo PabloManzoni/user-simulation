@@ -60,12 +60,12 @@ npx playwright install chromium
 The plugin opens your app, walks through it screen by screen as that user, and saves a Markdown
 report to `results/`.
 
-## Automatic mode — discover
+## Automatic mode — autopilot
 
 No profiles yet? Let the plugin build them:
 
 ```
-/user-simulation:discover
+/user-simulation:autopilot
 ```
 
 Give it just your app's **URL** (plus an optional one-line description of the business). It
@@ -90,7 +90,7 @@ detected risks, structural insight, and a single "Fix this first" — is saved t
 - A **synthetic-screen-evaluator** subagent reacts to one screen at a time, in character, using only
   what's visible. This isolation is what keeps it from compensating for bad design.
 - A **synthetic-flow-synthesizer** subagent reads the full run and writes the report.
-- In discover mode, a **synthetic-profile-generator** subagent builds each approved user's profile,
+- In autopilot mode, a **synthetic-profile-generator** subagent builds each approved user's profile,
   and a **synthetic-discovery-synthesizer** subagent consolidates all the runs into one report.
 
 The method is described in [framework.md](framework.md).

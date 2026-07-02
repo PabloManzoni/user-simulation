@@ -112,6 +112,12 @@ Wait for the user. Only continue once a real profile is in hand.
 ## Step 1 — Prepare
 
 - Read the full profile (if it's a path, use Read). Confirm it has the minimum sections.
+- **Role-task fit check**: compare the task against the profile's "Suitable task types" and
+  "Unsuitable task types" sections. If the task clearly matches an unsuitable type (e.g. an admin
+  configuration task given to an end-user profile), warn the user BEFORE running — a mismatched
+  pair produces a report that looks valid but measures nothing real. Show which unsuitable type it
+  matches and ask: run it anyway, or fix the pairing (different task or different profile). Proceed
+  only with explicit confirmation; if they confirm, note the mismatch in the report header.
 - Set the **step cap** (anti-loop safety net). Default: **15**. The user can change it.
 - Initialize an empty `steps` list and `memory = null` (memory only exists from step 2 onward).
 

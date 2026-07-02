@@ -1,6 +1,6 @@
 # User Simulation
 
-A Claude Code plugin that runs a **synthetic user** over your **live web app** and gives you a
+A Claude Code plugin that runs **synthetic users** over your **live web app** and gives you a
 step-by-step UX report — what they do on each screen, how clear it is, where they hesitate, and
 where they give up.
 
@@ -8,14 +8,22 @@ It's app-agnostic: it points at any web app by URL. The synthetic user only uses
 screen (no guessing, no filling gaps), so it surfaces *real* friction instead of a polished
 best-case walkthrough.
 
+It has **two modes**:
+
+| | **Manual — `run`** | **Automatic — `autopilot`** |
+|---|---|---|
+| You bring | a profile + URL + task | just a URL |
+| It runs | one user through one flow | several users, one simulation each |
+| You get | one report | individual reports + one consolidated report |
+
 ## Requirements
 
 - **Claude Code** — this plugin runs inside it.
 - **Google Chrome** — required. Playwright MCP drives your installed Chrome by default, so Chrome
   must be present on the machine. (No Chrome extension needed.)
 - **Playwright MCP** — the browser driver. A one-time install (see below).
-- **A synthetic user profile** (`.md`) — build one at **https://synthetic.tuggsy.com/**, download
-  it, and drop it into a `profiles/` folder in your project.
+- **A synthetic user profile** (`.md`) — only for the manual mode. Build one at
+  **https://synthetic.tuggsy.com/**. (Autopilot builds profiles for you.)
 
 ## Install
 
@@ -46,41 +54,48 @@ npx playwright install chromium
 
 > To update later: run `/plugin uninstall user-simulation` in Claude Code, then repeat Steps 3–4.
 
-## Use
+## Manual mode — run
 
-1. Build your profile at **https://synthetic.tuggsy.com/**, download the `.md`, and put it in a `profiles/` folder in your project — or drag and drop it directly into the Claude Code chat.
+Test **one flow** with a user you already have. You bring three things: the profile, the URL, and
+the task.
+
+```
+/user-simulation:run
+```
+
+1. Build your profile at **https://synthetic.tuggsy.com/**, download the `.md`, and put it in a
+   `profiles/` folder in your project — or drag and drop it directly into the Claude Code chat.
 2. Make sure your web app is running (e.g. `http://localhost:5173`).
-3. Run:
-   ```
-   /user-simulation:run
-   ```
-4. When asked, give it three things: **which profile**, the **app URL**, and the **task** to test
-   (e.g. *"create a raffle and pick a winner"*).
+3. Run the command and, when asked, give it the three things: **which profile**, the **app URL**,
+   and the **task** to test (e.g. *"create a raffle and pick a winner"*).
 
-The plugin opens your app, walks through it screen by screen as that user, and saves a Markdown
-report to `results/`.
+It opens your app, walks through it screen by screen as that user, and saves a Markdown report to
+`results/`.
 
 ## Automatic mode — autopilot
 
-No profiles yet? Let the plugin build them:
+Test **your whole app** without preparing anything. You bring one thing: the URL. It proposes the
+users; you just approve.
 
 ```
 /user-simulation:autopilot
 ```
 
-Give it just your app's **URL** (plus an optional one-line description of the business). It
-researches the site, **proposes** synthetic users with their tasks, and waits for you: edit the
-proposal in plain language — or say *"run as is"*. Then it generates the profiles (the `.md` for
-simulation plus a `.builder.json` you can re-open in the [profile builder](https://synthetic.tuggsy.com/)
-to edit by hand), runs one simulation per user, and saves the individual reports plus a
-**consolidated report** that ranks findings by how many users hit them — including contrasted
-user pairs that reveal who your design favors.
+1. It **researches** your site and **proposes** synthetic users, each with their own tasks.
+2. **You edit the proposal** in plain language ("remove user 2", "add this task") — or say
+   *"run as is"*.
+3. It **generates the profiles** — a `.md` for simulating, plus a `.builder.json` you can open in
+   the [profile builder](https://synthetic.tuggsy.com/) to edit by hand later.
+4. It **runs one simulation per user**, saving each report as it goes.
+5. It writes a **consolidated report** that ranks findings by how many users hit them — including
+   contrasted user pairs that reveal who your design favors.
 
 ## What you get
 
-When the run finishes, you see a summary in chat: result, friction peak, and a table of actionable
-improvements ordered by impact. The full report — per-screen walkthrough, emotional arc,
-detected risks, structural insight, and a single "Fix this first" — is saved to `results/`.
+Both modes end with a short summary in chat: result, where friction peaked, and a table of
+actionable improvements ordered by impact. The full reports are saved to `results/` — per-screen
+walkthrough, emotional arc, detected risks, structural insight, and a single **"Fix this first"**.
+Autopilot adds the consolidated cross-user report on top.
 
 ## How it works
 

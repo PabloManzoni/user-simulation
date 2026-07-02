@@ -8,13 +8,15 @@ It's app-agnostic: it points at any web app by URL. The synthetic user only uses
 screen (no guessing, no filling gaps), so it surfaces *real* friction instead of a polished
 best-case walkthrough.
 
-It has **two modes**:
+It has **two modes**. The difference is how much control you keep vs. how much it automates:
 
 | | **Manual — `run`** | **Automatic — `autopilot`** |
 |---|---|---|
-| You bring | a profile + URL + task | just a URL |
+| The users | yours — you already know who to test | inferred from your site — it proposes, you approve |
+| You bring | your profile + URL + task | just a URL |
 | It runs | one user through one flow | several users, one simulation each |
 | You get | one report | individual reports + one consolidated report |
+| Control | full — you define everything | less — you curate a proposal, it does the rest |
 
 ## Requirements
 
@@ -56,8 +58,8 @@ npx playwright install chromium
 
 ## Manual mode — run
 
-Test **one flow** with a user you already have. You bring three things: the profile, the URL, and
-the task.
+**You already know who you want to test.** You bring the profile, the URL and the task — a single
+run, full control over what gets tested.
 
 ```
 /user-simulation:run
@@ -74,8 +76,9 @@ It opens your app, walks through it screen by screen as that user, and saves a M
 
 ## Automatic mode — autopilot
 
-Test **your whole app** without preparing anything. You bring one thing: the URL. It proposes the
-users; you just approve.
+**You don't know (or don't want to define) your users yet.** Give it just the URL: based on your
+site, it infers who likely uses it and lets you choose — and edit — which ones to run. Automatic
+multi-user, near-zero effort.
 
 ```
 /user-simulation:autopilot

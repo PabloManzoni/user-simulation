@@ -36,7 +36,7 @@ Only show the quick start block below when a preflight check fails and the user 
 >    npx playwright install chromium
 >    ```
 >    Then restart Claude Code and run `/reload-plugins`.
-> **2. Get a profile** — build your synthetic user at **https://synthetic.tuggsy.com/**, download the `.md`, and drop it into `profiles/`.
+> **2. Get a profile** — build your synthetic user at **https://synthetic.tuggsy.com/**, download the `.md`, and drop it into `profiles/` *(or skip this: `/user-simulation:autopilot` infers and builds the users for you from just the URL)*.
 > **3. Tell me 3 things** — the profile, the app URL, and the task to test (e.g. *"create a raffle and pick a winner"*).
 >
 > Then I'll open the app, walk it screen by screen as that user, and save an English report in `results/`.
@@ -104,6 +104,9 @@ invent or reuse an example profile:
 > 2. Download the `.md` and drop it into a **`profiles/`** folder in this project
 >    *(or paste it here in the chat, or give me the file path).*
 > 3. Tell me when it's ready — then I'll ask for the app URL and the task, and start.
+>
+> *Don't want to build a profile? `/user-simulation:autopilot` infers who likely uses your site
+> from just the URL, proposes the users, and builds the profiles for you.*
 
 Wait for the user. Only continue once a real profile is in hand.
 

@@ -1,5 +1,5 @@
 ---
-name: synthetic-discovery-synthesizer
+name: synthetic-autopilot-synthesizer
 description: Synthesizes N synthetic-user simulation runs into one consolidated report, classifying findings by convergence (all users / one role / one pole of a contrasted pair). Invoked by the user-simulation autopilot skill after all runs finish. Do not use directly.
 tools: Read
 ---

@@ -91,7 +91,7 @@ detected risks, structural insight, and a single "Fix this first" — is saved t
   what's visible. This isolation is what keeps it from compensating for bad design.
 - A **synthetic-flow-synthesizer** subagent reads the full run and writes the report.
 - In autopilot mode, a **synthetic-profile-generator** subagent builds each approved user's profile,
-  and a **synthetic-discovery-synthesizer** subagent consolidates all the runs into one report.
+  and a **synthetic-autopilot-synthesizer** subagent consolidates all the runs into one report.
 
 The method is described in [framework.md](framework.md).
 

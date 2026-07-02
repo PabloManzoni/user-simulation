@@ -181,7 +181,7 @@ batch mode:
 
 ## Step 7 — Consolidation
 
-Spawn the `synthetic-discovery-synthesizer` subagent (Agent tool, `subagent_type: "synthetic-discovery-synthesizer"`) passing as text:
+Spawn the `synthetic-autopilot-synthesizer` subagent (Agent tool, `subagent_type: "synthetic-autopilot-synthesizer"`) passing as text:
 
 - the **business summary** (from Step 1),
 - the **run list** — for each run: `{ slug, role, isPolarized, pairPartner, axes, task, result,

@@ -54,7 +54,9 @@ npx playwright install chromium
 /reload-plugins
 ```
 
-> To update later: run `/plugin uninstall user-simulation` in Claude Code, then repeat Steps 3–4.
+> To update later, in Claude Code: first refresh the catalog with
+> `/plugin marketplace update pablom-plugins`, then `/plugin uninstall user-simulation`, and repeat
+> Steps 3–4. (In the desktop app you can also just press **Update** on the plugin's settings page.)
 
 ## Manual mode — run
 

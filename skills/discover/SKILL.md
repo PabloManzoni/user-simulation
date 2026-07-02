@@ -15,8 +15,8 @@ has not approved.** "Run as is" approval in one step is always available — tha
 experience, contained in this mode.
 
 This mode **composes** the existing pieces without modifying them: each run reuses the
-`user-simulation` skill's loop (screen-evaluator per screen, flow-analysis per run). Profile
-generation uses the `profile-architect` subagent and the vocabulary in this skill's directory
+`user-simulation` skill's loop (synthetic-screen-evaluator per screen, synthetic-flow-synthesizer per run). Profile
+generation uses the `synthetic-profile-generator` subagent and the vocabulary in this skill's directory
 (`vocabulary.md` — the source of truth for pools, axes, quality gates and file templates).
 
 ---
@@ -129,8 +129,8 @@ Apply the user's edits and re-show the updated proposal (same template). Rules:
 
 ## Step 4 — Generate profiles
 
-For each approved user, spawn the `profile-architect` subagent (Agent tool,
-`subagent_type: "profile-architect"`) passing as text: the business summary, the user's spec (role,
+For each approved user, spawn the `synthetic-profile-generator` subagent (Agent tool,
+`subagent_type: "synthetic-profile-generator"`) passing as text: the business summary, the user's spec (role,
 one-line, expertise hints, axis positions if polarized + pair partner slug, curated context), the
 assigned tasks (context only), and the ABSOLUTE PATH to this skill's `vocabulary.md`. Architects for
 different users can run in parallel (they don't touch the browser).
@@ -162,8 +162,8 @@ On a mismatch:
 ## Step 6 — Runs (sequential, one browser)
 
 For each approved user×task pair, execute the `run` skill's Steps 1–4 exactly as written
-there (Prepare → Open the app → perceive/decide/execute loop with `screen-evaluator` → synthesis with
-`flow-analysis`). Same step cap (15), same stop conditions, same report format. Additional rules for
+there (Prepare → Open the app → perceive/decide/execute loop with `synthetic-screen-evaluator` →
+synthesis with `synthetic-flow-synthesizer`). Same step cap (15), same stop conditions, same report format. Additional rules for
 batch mode:
 
 - **One run at a time** — a single Playwright browser; never interleave runs.
@@ -172,7 +172,7 @@ batch mode:
   estimatedTimeSeconds, emotionalState, memory }`).
 - After each run: save the individual report to `results/<YYYY-MM-DD>-<slug>.md`, then retain only
   the report path + its Result/Steps line — drop the step list from working context. The
-  consolidation reads reports FROM DISK.
+  the consolidation step reads reports FROM DISK.
 - Between runs, print exactly one progress line:
   `Run 2/4 — <slug>: <Result> (N steps, ~Xs)`.
 - If a run dies for technical reasons (site down, browser error), record it as
@@ -181,7 +181,7 @@ batch mode:
 
 ## Step 7 — Consolidation
 
-Spawn the `consolidation` subagent (Agent tool, `subagent_type: "consolidation"`) passing as text:
+Spawn the `synthetic-discovery-synthesizer` subagent (Agent tool, `subagent_type: "synthetic-discovery-synthesizer"`) passing as text:
 
 - the **business summary** (from Step 1),
 - the **run list** — for each run: `{ slug, role, isPolarized, pairPartner, axes, task, result,
@@ -231,4 +231,4 @@ POTENTIAL IMPROVEMENTS (consolidated)
   keeps the user×task mapping.
 - **Same date for all artifacts** of one discover run.
 - Reuse, don't reimplement: the per-run loop belongs to the `run` skill; the profile
-  format belongs to `vocabulary.md`; the report format belongs to `flow-analysis`.
+  format belongs to `vocabulary.md`; the report format belongs to `synthetic-flow-synthesizer`.

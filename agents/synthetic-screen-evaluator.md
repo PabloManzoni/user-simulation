@@ -1,5 +1,5 @@
 ---
-name: screen-evaluator
+name: synthetic-screen-evaluator
 description: Evaluates ONE screen of a live web app as the synthetic user, in first person, using only what's visible and its memory. Invoked by the user-simulation skill, one step at a time. Do not use directly.
 tools: Read
 ---

@@ -7,7 +7,7 @@
 > If any of those builder files change, update this file AND re-run the round-trip test
 > (plan, Bloque A step 4). Do not edit the pools here independently of the builder.
 
-The profile-architect MUST build profiles by **choosing from these pools**. Custom items (outside a
+The synthetic-profile-generator MUST build profiles by **choosing from these pools**. Custom items (outside a
 pool) are allowed only when the business genuinely demands it — justify each one in `selfCheck.customJustification`.
 Custom items go in the slice's `custom` array AND in `selected`.
 

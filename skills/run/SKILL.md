@@ -131,7 +131,7 @@ Repeat until a stop condition is met. Each iteration:
      screen's visible content. Optionally also `browser_take_screenshot` when visual layout matters
      as report evidence; the snapshot alone is enough to decide and act.
 
-  **b. Decide**: spawn the `screen-evaluator` subagent (Agent tool, `subagent_type: "screen-evaluator"`)
+  **b. Decide**: spawn the `synthetic-screen-evaluator` subagent (Agent tool, `subagent_type: "synthetic-screen-evaluator"`)
      passing, as text:
        - the **full profile**
        - the **task** (the goal)
@@ -165,7 +165,7 @@ Repeat until a stop condition is met. Each iteration:
 
 ## Step 4 — Synthesis
 
-Spawn the `flow-analysis` subagent (`subagent_type: "flow-analysis"`) passing the complete
+Spawn the `synthetic-flow-synthesizer` subagent (`subagent_type: "synthetic-flow-synthesizer"`) passing the complete
 `steps` list (full JSON for each) + the profile + the task + the stop reason. Returns the report.
 
 ## Step 5 — Deliver

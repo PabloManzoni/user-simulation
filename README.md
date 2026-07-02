@@ -87,9 +87,11 @@ detected risks, structural insight, and a single "Fix this first" — is saved t
 - An **orchestrator** (the skill) drives the browser via Playwright MCP and runs a
   *perceive → decide → execute* loop. It reads each screen as an accessibility snapshot
   (text + roles + states) and acts on elements by reference — no pixel-guessing.
-- A **screen-evaluator** subagent reacts to one screen at a time, in character, using only what's
-  visible. This isolation is what keeps it from compensating for bad design.
-- A **flow-analysis** subagent reads the full run and writes the report.
+- A **synthetic-screen-evaluator** subagent reacts to one screen at a time, in character, using only
+  what's visible. This isolation is what keeps it from compensating for bad design.
+- A **synthetic-flow-synthesizer** subagent reads the full run and writes the report.
+- In discover mode, a **synthetic-profile-generator** subagent builds each approved user's profile,
+  and a **synthetic-discovery-synthesizer** subagent consolidates all the runs into one report.
 
 The method is described in [framework.md](framework.md).
 

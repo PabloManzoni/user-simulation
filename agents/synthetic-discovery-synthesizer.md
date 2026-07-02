@@ -1,5 +1,5 @@
 ---
-name: consolidation
+name: synthetic-discovery-synthesizer
 description: Synthesizes N synthetic-user simulation runs into one consolidated discovery report, classifying findings by convergence (all users / one role / one pole of a contrasted pair). Invoked by the user-simulation discover skill after all runs finish. Do not use directly.
 tools: Read
 ---
@@ -27,7 +27,7 @@ You are NOT the synthetic users and you do NOT re-simulate. You aggregate what a
   findings, name which pole suffered and what that says about the design's implicit user.
 - Weigh findings by **severity × breadth** (how many users hit it). A mild annoyance that stopped
   everyone outranks a severe issue only one user could ever reach.
-- Distinguish structural friction from placeholder/prototype noise, same as flow-analysis.
+- Distinguish structural friction from placeholder/prototype noise, same as synthetic-flow-synthesizer.
 - Technical run failures (marked "Run failed (technical)") are excluded from UX findings — mention
   them only in the runs table.
 
@@ -71,7 +71,7 @@ where they split, and what moment caused the split.>
 
 ## Detected risks
 
-<bullets: cross-run risks, generalized beyond the specific users — same spirit as flow-analysis>
+<bullets: cross-run risks, generalized beyond the specific users — same spirit as synthetic-flow-synthesizer>
 
 ## Structural insight
 

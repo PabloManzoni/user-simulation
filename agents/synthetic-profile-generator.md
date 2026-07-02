@@ -1,5 +1,5 @@
 ---
-name: profile-architect
+name: synthetic-profile-generator
 description: Generates ONE synthetic user profile (markdown + builder-compatible JSON) from a business summary and an approved user spec, choosing strictly from the embedded vocabulary. Invoked by the user-simulation discover skill. Do not use directly.
 tools: Read
 ---

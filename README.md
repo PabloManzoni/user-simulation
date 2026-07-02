@@ -8,15 +8,14 @@ It's app-agnostic: it points at any web app by URL. The synthetic user only uses
 screen (no guessing, no filling gaps), so it surfaces *real* friction instead of a polished
 best-case walkthrough.
 
-It has **two modes**. The difference is how much control you keep vs. how much it automates:
+It has **two modes**. The difference is who defines the test:
 
-| | **Manual — `run`** | **Automatic — `autopilot`** |
+| | **Custom — `run`** | **Inferred — `autopilot`** |
 |---|---|---|
-| The users | yours — you already know who to test | inferred from your site — it proposes, you approve |
+| The users | you create them — you know who to test | inferred from your site — it proposes, you choose |
 | You bring | your profile + URL + task | just a URL |
 | It runs | one user through one flow | several users, one simulation each |
 | You get | one report | individual reports + one consolidated report |
-| Control | full — you define everything | less — you curate a proposal, it does the rest |
 
 ## Requirements
 
@@ -24,8 +23,8 @@ It has **two modes**. The difference is how much control you keep vs. how much i
 - **Google Chrome** — required. Playwright MCP drives your installed Chrome by default, so Chrome
   must be present on the machine. (No Chrome extension needed.)
 - **Playwright MCP** — the browser driver. A one-time install (see below).
-- **A synthetic user profile** (`.md`) — only for the manual mode. Build one at
-  **https://synthetic.tuggsy.com/**. (Autopilot builds profiles for you.)
+- **A synthetic user profile** (`.md`) — only for the custom mode (`run`). Build one at
+  **https://synthetic.tuggsy.com/**. (`autopilot` infers and builds profiles for you.)
 
 ## Install
 
@@ -58,10 +57,10 @@ npx playwright install chromium
 > `/plugin marketplace update pablom-plugins`, then `/plugin uninstall user-simulation`, and repeat
 > Steps 3–4. (In the desktop app you can also just press **Update** on the plugin's settings page.)
 
-## Manual mode — run *(a single run, more control)*
+## Custom — run
 
-**You already know who you want to test.** You bring the profile, the URL and the task, and you
-define exactly what gets tested.
+**You know which type of user you want to test.** You create (or bring) the profile and define
+the task yourself.
 
 ```
 /user-simulation:run
@@ -76,10 +75,10 @@ define exactly what gets tested.
 It opens your app, walks through it screen by screen as that user, and saves a Markdown report to
 `results/`.
 
-## Automatic mode — autopilot *(an automatic multi-user run, less control)*
+## Inferred — autopilot
 
-**You don't know (or don't want to define) your users yet.** Give it just the URL: based on your
-site, it infers who likely uses it and lets you choose — and edit — which ones to run.
+**Based on your site, it infers who likely uses it** and lets you choose — and edit — which ones
+to run. You bring just the URL.
 
 ```
 /user-simulation:autopilot

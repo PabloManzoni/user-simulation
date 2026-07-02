@@ -1,6 +1,6 @@
 ---
 name: autopilot
-description: Autopilot mode — an automatic multi-user run, less manual control: discovers synthetic users for a live web app from just a URL, researches the business, proposes users + tasks for human approval, generates builder-compatible profiles, then runs one simulation per user and consolidates findings. Use when the user wants an automatic multi-user UX evaluation from a URL, or types /user-simulation:autopilot.
+description: Autopilot — the inferred mode: from just a URL it researches the business, infers who likely uses the site, proposes users + tasks and lets you choose (and edit) which ones to run; then it generates builder-compatible profiles, runs one simulation per user and consolidates findings. Use when the user wants a multi-user UX evaluation inferred from a URL, or types /user-simulation:autopilot.
 ---
 
 # Autopilot — automatic multi-user simulation

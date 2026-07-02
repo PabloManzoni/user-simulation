@@ -1,6 +1,6 @@
 ---
 name: run
-description: Runs a synthetic user over a live web app to evaluate UX step by step (action, clarity, doubt, emotion, memory) and produces a report — a single run, more manual control (you provide the profile, URL and task). Use when the user wants to simulate a profile over an app/URL, test usability, or types /user-simulation:run.
+description: Runs a synthetic user over a live web app to evaluate UX step by step (action, clarity, doubt, emotion, memory) and produces a report — the custom mode: you know which type of user you want to test, so you provide the profile, the URL and the task. Use when the user wants to simulate a profile over an app/URL, test usability, or types /user-simulation:run.
 ---
 
 # User simulation

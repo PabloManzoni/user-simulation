@@ -1,8 +1,8 @@
 {
   "name": "user-simulation",
   "displayName": "User Simulation",
-  "version": "2.1.0",
-  "description": "Run a synthetic user over a live web app and get a step-by-step UX report (action, clarity, doubt, emotion). App-agnostic; drives the browser via Playwright MCP.",
+  "version": "3.0.0",
+  "description": "Run synthetic users over a live web app and get step-by-step UX reports (action, clarity, doubt, emotion). Two modes: run (your profile, one flow) and discover (just a URL — proposes users, you curate, it runs them all and consolidates). Drives the browser via Playwright MCP.",
   "author": {
     "name": "Pablo Manzoni",
     "email": "pablom@kzsoftworks.com"

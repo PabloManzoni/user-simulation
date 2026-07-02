@@ -60,6 +60,22 @@ npx playwright install chromium
 The plugin opens your app, walks through it screen by screen as that user, and saves a Markdown
 report to `results/`.
 
+## Automatic mode — discover
+
+No profiles yet? Let the plugin build them:
+
+```
+/user-simulation:discover
+```
+
+Give it just your app's **URL** (plus an optional one-line description of the business). It
+researches the site, **proposes** synthetic users with their tasks, and waits for you: edit the
+proposal in plain language — or say *"run as is"*. Then it generates the profiles (the `.md` for
+simulation plus a `.builder.json` you can re-open in the [profile builder](https://synthetic.tuggsy.com/)
+to edit by hand), runs one simulation per user, and saves the individual reports plus a
+**consolidated report** that ranks findings by how many users hit them — including contrasted
+user pairs that reveal who your design favors.
+
 ## What you get
 
 When the run finishes, you see a summary in chat: result, friction peak, and a table of actionable

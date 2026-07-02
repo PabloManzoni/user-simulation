@@ -94,9 +94,9 @@ research honestly supports, not a fixed number):
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Edit freely in natural language — for example:
-· "sacá el usuario 2" · "al 1 agregale la tarea X" · "cambiale el rol al 3"
-· or add context: "los usuarios suelen estar apurados" (I'll place it in the right spot)
-Or say **"corré tal cual"** to start right away.
+· "remove user 2" · "add task X to user 1" · "change user 3's role"
+· or add context: "these users are usually in a hurry" (I'll place it in the right spot)
+Or say **"run as is"** to start right away.
 Estimated duration once approved: ~<N×3-5> min (<N> sequential runs).
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
@@ -121,11 +121,11 @@ Apply the user's edits and re-show the updated proposal (same template). Rules:
 - **Task language goes to tasks**: anything that sounds like navigation or an objective becomes a
   task, never profile content.
 - **Ambiguity → ask**: if the input fits more than one bucket, use AskUserQuestion with the
-  candidate buckets as options (e.g. "«no le gusta esperar» — emotional pattern or abandonment
+  candidate buckets as options (e.g. "'hates waiting' — emotional pattern or abandonment
   rule?"). Never classify doubtful input silently.
 - **Global vs per-user**: decide whether the context affects one user or all profiles; if not
   obvious, ask.
-- Exit the loop ONLY on explicit approval ("dale", "corré tal cual", "aprobado", etc.).
+- Exit the loop ONLY on explicit approval ("go ahead", "run as is", "approved", etc.).
 
 ## Step 4 — Generate profiles
 

@@ -13,6 +13,14 @@
       "author": {
         "name": "Pablo Manzoni"
       }
+    },
+    {
+      "name": "heuristic-review",
+      "source": "./heuristic-review",
+      "description": "Expert Nielsen heuristic evaluation of a live web app, severity-rated by three synthetic personas, with a prioritized findings report.",
+      "author": {
+        "name": "Pablo Manzoni"
+      }
     }
   ]
 }

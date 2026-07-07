@@ -1,0 +1,21 @@
+{
+  "name": "heuristic-review",
+  "displayName": "Heuristic Review",
+  "version": "1.0.0",
+  "description": "Nielsen heuristic evaluation of a live web app: one expert agent inspects every screen in scope against the ten usability heuristics under forced enumeration, three synthetic rater personas judge each finding's usability impact, and you get a prioritized findings table (business impact × usability impact, with rater convergence). Three scope modes: single screen, specific flow, or whole-site crawl. Drives the browser via Playwright MCP.",
+  "author": {
+    "name": "Pablo Manzoni",
+    "email": "pablom@kzsoftworks.com"
+  },
+  "repository": "https://github.com/PabloManzoni/user-simulation",
+  "homepage": "https://github.com/PabloManzoni/user-simulation",
+  "license": "MIT",
+  "keywords": [
+    "ux",
+    "usability",
+    "heuristic-evaluation",
+    "nielsen",
+    "expert-review",
+    "synthetic-user"
+  ]
+}

@@ -1,6 +1,6 @@
 ---
 name: heuristic-persona-rater
-description: Rates the usability impact of already-detected heuristic findings from the lens of ONE synthetic rater persona — it does not detect, does not navigate, does not propose fixes. Invoked by the heuristic-review skill. Do not use directly.
+description: Rates the usability impact of already-detected heuristic findings from the lens of ONE synthetic rater persona — it does not detect, does not navigate, does not propose fixes. Invoked by the user-simulation heuristic-test skill. Do not use directly.
 tools: Read
 ---
 

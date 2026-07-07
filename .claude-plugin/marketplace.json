@@ -9,15 +9,7 @@
     {
       "name": "user-simulation",
       "source": "./",
-      "description": "Run a synthetic user over a live web app and get a step-by-step UX report.",
-      "author": {
-        "name": "Pablo Manzoni"
-      }
-    },
-    {
-      "name": "heuristic-review",
-      "source": "./heuristic-review",
-      "description": "Expert Nielsen heuristic evaluation of a live web app, severity-rated by three synthetic personas, with a prioritized findings report.",
+      "description": "Synthetic UX testing over a live web app: simulate a user's experience (simulation-run / simulation-auto) or run an expert Nielsen heuristic evaluation (heuristic-test).",
       "author": {
         "name": "Pablo Manzoni"
       }

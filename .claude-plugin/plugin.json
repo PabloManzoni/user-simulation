@@ -1,8 +1,8 @@
 {
   "name": "user-simulation",
   "displayName": "User Simulation",
-  "version": "3.0.4",
-  "description": "Run synthetic users over a live web app and get step-by-step UX reports (action, clarity, doubt, emotion). Two modes: run (custom — you know which user to test: your profile, URL and task) and autopilot (inferred — from just a URL it infers who likely uses the site, you choose which ones to run, it consolidates the findings). Drives the browser via Playwright MCP.",
+  "version": "4.0.0",
+  "description": "Synthetic UX testing over a live web app, two complementary lenses. EXPERIENCE (simulation): a synthetic user walks the app and reports friction, doubt and emotion — simulation-run (custom: your profile + URL + task) and simulation-auto (inferred: from just a URL it proposes users and consolidates the runs). INSPECTION (heuristics): heuristic-test runs an expert Nielsen heuristic evaluation, severity-rated by three synthetic personas, into a prioritized findings table. Drives the browser via Playwright MCP.",
   "author": {
     "name": "Pablo Manzoni",
     "email": "pablom@kzsoftworks.com"
@@ -15,6 +15,9 @@
     "usability",
     "user-testing",
     "synthetic-user",
-    "simulation"
+    "simulation",
+    "heuristic-evaluation",
+    "nielsen",
+    "expert-review"
   ]
 }

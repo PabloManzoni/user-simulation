@@ -1,6 +1,6 @@
 ---
 name: heuristic-expert-evaluator
-description: Detects violations of Nielsen's ten usability heuristics across all screens in scope via forced enumeration, with verbatim snapshot evidence, business impact scores and one-sentence fixes. Invoked by the heuristic-review skill. Do not use directly.
+description: Detects violations of Nielsen's ten usability heuristics across all screens in scope via forced enumeration, with verbatim snapshot evidence, business impact scores and one-sentence fixes. Invoked by the user-simulation heuristic-test skill. Do not use directly.
 tools: Read
 ---
 

@@ -1,6 +1,6 @@
 ---
-name: run
-description: Runs a synthetic user over a live web app to evaluate UX step by step (action, clarity, doubt, emotion, memory) and produces a report — the custom mode: you know which type of user you want to test, so you provide the profile, the URL and the task. Use when the user wants to simulate a profile over an app/URL, test usability, or types /user-simulation:run.
+name: simulation-run
+description: Runs a synthetic user over a live web app to evaluate UX step by step (action, clarity, doubt, emotion, memory) and produces a report — the custom simulation mode: you know which type of user you want to test, so you provide the profile, the URL and the task. Use when the user wants to simulate a profile over an app/URL, test usability, or types /user-simulation:simulation-run.
 ---
 
 # User simulation
@@ -36,10 +36,10 @@ Only show the quick start block below when a preflight check fails and the user 
 >    npx playwright install chromium
 >    ```
 >    Then restart Claude Code and run `/reload-plugins`.
-> **2. Get a profile** — build your synthetic user at **https://synthetic.tuggsy.com/**, download the `.md`, and drop it into `profiles/` *(or skip this: `/user-simulation:autopilot` infers and builds the users for you from just the URL)*.
+> **2. Get a profile** — build your synthetic user at **https://synthetic.tuggsy.com/**, download the `.md`, and drop it into `user-simulation-tests/simulation/profiles/` *(or skip this: `/user-simulation:simulation-auto` infers and builds the users for you from just the URL)*.
 > **3. Tell me 3 things** — the profile, the app URL, and the task to test (e.g. *"create a raffle and pick a winner"*).
 >
-> Then I'll open the app, walk it screen by screen as that user, and save an English report in `results/`.
+> Then I'll open the app, walk it screen by screen as that user, and save an English report in `user-simulation-tests/simulation/results/`.
 
 ---
 
@@ -86,11 +86,11 @@ If the tools are NOT found (the server isn't configured, or this session started
 A synthetic user profile is **required** — it's the user you act as; with no profile there is
 literally nothing to simulate. A profile counts as available ONLY if one of these is true:
 
-- there is at least one `.md` file inside a `profiles/` folder in the current working directory, **or**
+- there is at least one `.md` file inside a `user-simulation-tests/simulation/profiles/` folder in the current working directory, **or**
 - the user gave you a file path to a profile `.md`, **or**
 - the user pasted a full profile into the chat.
 
-**Actually check** — list the `profiles/` folder; don't assume. If none of the three is true,
+**Actually check** — list the `user-simulation-tests/simulation/profiles/` folder; don't assume. If none of the three is true,
 **STOP immediately** and show exactly this. Do not open the app, do not start any step, and do not
 invent or reuse an example profile:
 
@@ -101,11 +101,11 @@ invent or reuse an example profile:
 >
 > **Do this first:**
 > 1. Create a profile at **https://synthetic.tuggsy.com/**
-> 2. Download the `.md` and drop it into a **`profiles/`** folder in this project
+> 2. Download the `.md` and drop it into a **`user-simulation-tests/simulation/profiles/`** folder in this project
 >    *(or paste it here in the chat, or give me the file path).*
 > 3. Tell me when it's ready — then I'll ask for the app URL and the task, and start.
 >
-> *Don't want to build a profile? `/user-simulation:autopilot` infers who likely uses your site
+> *Don't want to build a profile? `/user-simulation:simulation-auto` infers who likely uses your site
 > from just the URL, proposes the users, and builds the profiles for you.*
 
 Wait for the user. Only continue once a real profile is in hand.
@@ -179,13 +179,13 @@ Spawn the `synthetic-flow-synthesizer` subagent (`subagent_type: "synthetic-flow
 
 ## Step 5 — Deliver
 
-1. Save the report to `results/<YYYY-MM-DD>-<profile-slug>.md` (create `results/` if it doesn't exist).
+1. Save the report to `user-simulation-tests/simulation/results/<YYYY-MM-DD>-<profile-slug>.md` (create the folder if it doesn't exist).
 2. Do **NOT** paste the full report in chat. Instead, show exactly this structure:
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ✅  SIMULATION COMPLETE
-📄  Report saved: results/<filename>.md
+📄  Report saved: user-simulation-tests/simulation/results/<filename>.md
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 **Result:** <Goal reached / Abandoned at step N / Step cap reached>

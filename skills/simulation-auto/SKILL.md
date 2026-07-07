@@ -1,11 +1,11 @@
 ---
-name: autopilot
-description: Autopilot — the inferred mode: from just a URL it researches the business, infers who likely uses the site, proposes users + tasks and lets you choose (and edit) which ones to run; then it generates builder-compatible profiles, runs one simulation per user and consolidates findings. Use when the user wants a multi-user UX evaluation inferred from a URL, or types /user-simulation:autopilot.
+name: simulation-auto
+description: The inferred simulation mode (autopilot): from just a URL it researches the business, infers who likely uses the site, proposes users + tasks and lets you choose (and edit) which ones to run; then it generates builder-compatible profiles, runs one simulation per user and consolidates findings. Use when the user wants a multi-user UX evaluation inferred from a URL, or types /user-simulation:simulation-auto.
 ---
 
-# Autopilot — automatic multi-user simulation
+# Simulation-auto — automatic multi-user simulation
 
-You orchestrate the **autopilot mode**: from a **URL** (plus an optional short business description),
+You orchestrate the **inferred simulation mode** (autopilot): from a **URL** (plus an optional short business description),
 you research the business, **propose** synthetic users with their tasks, let the human **curate** the
 proposal in chat, generate the approved profiles (builder-compatible), then run the standard
 simulation for each user×task pair and consolidate the findings.
@@ -15,7 +15,7 @@ has not approved.** "Run as is" approval in one step is always available — tha
 experience, contained in this mode.
 
 This mode **composes** the existing pieces without modifying them: each run reuses the
-`user-simulation` skill's loop (synthetic-screen-evaluator per screen, synthetic-flow-synthesizer per run). Profile
+`simulation-run` skill's loop (synthetic-screen-evaluator per screen, synthetic-flow-synthesizer per run). Profile
 generation uses the `synthetic-profile-generator` subagent and the vocabulary in this skill's directory
 (`vocabulary.md` — the source of truth for pools, axes, quality gates and file templates).
 
@@ -142,8 +142,9 @@ For each returned profile, the orchestrator:
    an INVALID finding never proceeds. Hard thresholds (forbidden ≥ 4, constraints ≥ 3, total signals
    ≥ 12, behavioral role description): up to **2 retries** passing the concrete issues back to the
    architect; if still failing → show the profile with a warning and ask (use as-is / discard).
-2. **Writes both files**: `profiles/<slug>.md` and `profiles/<slug>.builder.json`, where
-   `<slug> = <domain>-<role>[-<variant>]` (e.g. `padelpro-player-veteran`). Create `profiles/` if
+2. **Writes both files**: `user-simulation-tests/simulation/profiles/<slug>.md` and
+   `user-simulation-tests/simulation/profiles/<slug>.builder.json`, where
+   `<slug> = <domain>-<role>[-<variant>]` (e.g. `padelpro-player-veteran`). Create the folder if
    needed. Never overwrite an existing profile without asking.
 3. Shows a one-line summary per profile: slug · validation verdict · files written.
 
@@ -161,7 +162,7 @@ On a mismatch:
 
 ## Step 6 — Runs (sequential, one browser)
 
-For each approved user×task pair, execute the `run` skill's Steps 1–4 exactly as written
+For each approved user×task pair, execute the `simulation-run` skill's Steps 1–4 exactly as written
 there (Prepare → Open the app → perceive/decide/execute loop with `synthetic-screen-evaluator` →
 synthesis with `synthetic-flow-synthesizer`). Same step cap (15), same stop conditions, same report format. Additional rules for
 batch mode:
@@ -170,7 +171,7 @@ batch mode:
 - **Context hygiene**: discard each Playwright snapshot right after executing that step's action.
   Keep per step ONLY the evaluator JSON (`{ action, clarityLevel, doubtDetected, reason, abandoned,
   estimatedTimeSeconds, emotionalState, memory }`).
-- After each run: save the individual report to `results/<YYYY-MM-DD>-<slug>.md`, then retain only
+- After each run: save the individual report to `user-simulation-tests/simulation/results/<YYYY-MM-DD>-<slug>.md`, then retain only
   the report path + its Result/Steps line — drop the step list from working context. The
   the consolidation step reads reports FROM DISK.
 - Between runs, print exactly one progress line:
@@ -188,8 +189,8 @@ Spawn the `synthetic-autopilot-synthesizer` subagent (Agent tool, `subagent_type
   steps, timeSeconds, reportPath }`,
 - the instruction to Read each `reportPath` from disk.
 
-Save the returned report to `results/<YYYY-MM-DD>-autopilot-<domain>.md` (same date as everything
-else in this run; `<domain>` = host without TLD).
+Save the returned report to `user-simulation-tests/simulation/results/<YYYY-MM-DD>-autopilot-<domain>.md`
+(same date as everything else in this run; `<domain>` = host without TLD).
 
 ## Step 8 — Deliver
 
@@ -198,8 +199,8 @@ Do **NOT** paste any full report in chat. Show exactly this structure:
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 🔍✅  AUTOPILOT COMPLETE — <domain>
-📄  Consolidated report: results/<YYYY-MM-DD>-autopilot-<domain>.md
-📄  Individual reports: results/<YYYY-MM-DD>-<slug>.md (×N)
+📄  Consolidated report: user-simulation-tests/simulation/results/<YYYY-MM-DD>-autopilot-<domain>.md
+📄  Individual reports: user-simulation-tests/simulation/results/<YYYY-MM-DD>-<slug>.md (×N)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 | User | Result | Steps | ~Time |
@@ -230,5 +231,5 @@ POTENTIAL IMPROVEMENTS (consolidated)
 - **Tasks never enter profiles.** The architect receives them as context only; the orchestrator
   keeps the user×task mapping.
 - **Same date for all artifacts** of one autopilot run.
-- Reuse, don't reimplement: the per-run loop belongs to the `run` skill; the profile
+- Reuse, don't reimplement: the per-run loop belongs to the `simulation-run` skill; the profile
   format belongs to `vocabulary.md`; the report format belongs to `synthetic-flow-synthesizer`.

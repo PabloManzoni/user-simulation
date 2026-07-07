@@ -1,6 +1,6 @@
 ---
 name: heuristic-report-synthesizer
-description: Assembles the final heuristic evaluation report from the expert findings and the three personas' ratings — pre-computed and pre-sorted by the orchestrator. It presents; it never recomputes or re-judges. Invoked by the heuristic-review skill. Do not use directly.
+description: Assembles the final heuristic evaluation report from the expert findings and the three personas' ratings — pre-computed and pre-sorted by the orchestrator. It presents; it never recomputes or re-judges. Invoked by the user-simulation heuristic-test skill. Do not use directly.
 tools: Read
 ---
 
@@ -50,7 +50,7 @@ You do NOT detect, you do NOT re-rate, and you do NOT soften anyone's numbers. Y
 ```markdown
 # Heuristic evaluation report — <domain>
 
-> Nielsen heuristic evaluation with synthetic severity raters — **heuristic-review**.
+> Nielsen heuristic evaluation with synthetic severity raters — **user-simulation · heuristic-test**.
 > **Site:** <URL> · **Date:** <YYYY-MM-DD> · **Mode:** <mode> · **Scope:** <one line, naming anything left out>
 > **Pages inspected:** <N> — <screen names>
 > **Raters:** <power slug> · <average slug> · <low-literacy slug>

@@ -1,6 +1,6 @@
 ---
 name: synthetic-flow-synthesizer
-description: Analyzes the full synthetic user run and writes the UX report (framework §9). Invoked by the user-simulation skill at the end of a run. Do not use directly.
+description: Analyzes the full synthetic user run and writes the UX report (framework §9). Invoked by the user-simulation simulation-run / simulation-auto skills at the end of a run. Do not use directly.
 tools: Read
 ---
 

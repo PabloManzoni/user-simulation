@@ -1,4 +1,4 @@
-# Heuristic Review Framework
+# Heuristic Test Framework
 
 ## Conceptual framework and operational protocol for AI-assisted heuristic evaluation with synthetic severity raters
 
@@ -21,9 +21,9 @@ This document defines a framework for running heuristic evaluations with AI agen
 
 ## 2. Two Lenses: Inspection and Experience
 
-This framework is the sibling of the Synthetic Users Framework (the `user-simulation` plugin). They are complementary instruments, not competitors.
+This framework is the sibling of the Synthetic Users Framework — the two lenses of the `user-simulation` plugin (the `heuristic-test` skill here; the `simulation-run` / `simulation-auto` skills there). They are complementary instruments, not competitors.
 
-| | Heuristic review (this framework) | User simulation |
+| | Heuristic test (this framework) | User simulation |
 |---|---|---|
 | Lens | Inspection against principles | Lived experience of one profile |
 | Who judges | An expert agent + rater personas | The synthetic user itself |

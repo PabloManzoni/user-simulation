@@ -1,9 +1,9 @@
 ---
-name: evaluate
-description: Runs a Nielsen heuristic evaluation over a live web app — one expert agent inspects every screen in scope against the 10 usability heuristics (forced enumeration), three synthetic rater personas judge each finding, and you get a prioritized findings table. Three scope modes: single screen, specific flow, or whole-site crawl. Use when the user wants a heuristic evaluation / expert UX review / usability audit of a URL, or types /heuristic-review:evaluate.
+name: heuristic-test
+description: Runs a Nielsen heuristic evaluation over a live web app — one expert agent inspects every screen in scope against the 10 usability heuristics (forced enumeration), three synthetic rater personas judge each finding, and you get a prioritized findings table. Three scope modes: single screen, specific flow, or whole-site crawl. Use when the user wants a heuristic evaluation / expert UX review / usability audit of a URL, or types /user-simulation:heuristic-test.
 ---
 
-# Heuristic review
+# Heuristic test
 
 You orchestrate a **controlled heuristic evaluation** of a **live web app**: one expert agent
 detects violations of Nielsen's ten usability heuristics across the captured scope, three synthetic
@@ -19,8 +19,9 @@ The browser is driven through the **Playwright MCP** server: you perceive each s
 accessibility **snapshot** plus one **screenshot** per screen (evidence for visually-dependent
 heuristics).
 
-This is the inspection sibling of the `user-simulation` plugin: that one simulates how a user
-*feels*; this one audits what the interface *violates*. Reports are always written in **English**.
+This is the **inspection** lens of the `user-simulation` plugin — the sibling of the
+`simulation-run` / `simulation-auto` skills: those simulate how a user *feels*; this one audits
+what the interface *violates*. Reports are always written in **English**.
 
 ---
 
@@ -30,7 +31,7 @@ Run the Step 0 checks immediately. Do NOT print the quick start unless a check f
 pass and the user already provided URL + mode, start directly. If inputs are missing, ask only for
 the missing ones.
 
-> **🔍 Heuristic Review — quick start**
+> **🔍 Heuristic Test — quick start**
 > Run a Nielsen heuristic evaluation over your live web app and get a prioritized findings table.
 >
 > **1. Set up the browser (one time):**
@@ -45,7 +46,8 @@ the missing ones.
 >    · `site` — crawl and evaluate the whole site (default cap: 8 pages)
 >
 > Then I'll research the business, build three rater personas, capture the scope, run the expert
-> evaluation, and save an English report with the prioritized findings table in `results/`.
+> evaluation, and save an English report with the prioritized findings table in
+> `user-simulation-tests/heuristic/results/`.
 
 ---
 
@@ -90,16 +92,17 @@ blank page): show the error and **STOP**. A technical failure is never a finding
 
 ## Step 1 — Business research (skippable on persona reuse)
 
-If `personas/<domain>-power.md`, `personas/<domain>-average.md` and
-`personas/<domain>-low-literacy.md` already exist (domain = host without TLD), ask: **reuse or
-regenerate?** On reuse, load the business summary from `personas/<domain>.research.md` and skip to
-Step 3.
+If `user-simulation-tests/heuristic/personas/<domain>-power.md`,
+`user-simulation-tests/heuristic/personas/<domain>-average.md` and
+`user-simulation-tests/heuristic/personas/<domain>-low-literacy.md` already exist (domain = host
+without TLD), ask: **reuse or regenerate?** On reuse, load the business summary from
+`user-simulation-tests/heuristic/personas/<domain>.research.md` and skip to Step 3.
 
 Otherwise: navigate the home page plus up to 2 more pages (pricing / about / a primary workflow
 page), snapshot each, and extract a **business summary**: what the product is, who it serves, key
 workflows, and what a failed conversion costs. Discard each snapshot immediately after extracting
 its signal. Fold in the user-provided business description if any. Save the summary to
-`personas/<domain>.research.md` (create `personas/` if needed).
+`user-simulation-tests/heuristic/personas/<domain>.research.md` (create the folder if needed).
 
 ## Step 2 — Personas (one call, fixed trio)
 
@@ -116,7 +119,7 @@ writing files), and **verify the gates yourself** (never trust selfCheck alone):
 - no navigation machinery (abandonment rules, behavior axes, emotional progression) in any profile.
 
 On a failed gate: up to **2 retries** passing the concrete issues back. Then write the three
-profiles to `personas/<slug>.md`. Never overwrite existing files without asking.
+profiles to `user-simulation-tests/heuristic/personas/<slug>.md`. Never overwrite existing files without asking.
 
 ## Step 3 — Capture the scope
 
@@ -222,7 +225,7 @@ findings JSON.
 Spawn **three** `heuristic-persona-rater` subagents **in the same message** (they are independent
 and never touch the browser). Each receives, as text:
 
-- the full content of ITS persona profile (`personas/<slug>.md`),
+- the full content of ITS persona profile (`user-simulation-tests/heuristic/personas/<slug>.md`),
 - the business summary,
 - the screen context: one `screenId: <oneLiner>` line per screen referenced by any finding,
 - the findings **projection**: for each finding, ONLY `{ id, title, heuristicName, screens,
@@ -257,8 +260,8 @@ passing as text the full pre-computed bundle:
 - the findings, complete and **pre-sorted**, each with its ratings and computed numbers.
 
 Its instructions require it to copy every number verbatim. Save the returned Markdown to
-`results/<YYYY-MM-DD>-heuristic-<domain>-<scope>.md` where `<scope>` = `site` | `flow-<slug>` |
-`screen-<slug>` (create `results/` if needed).
+`user-simulation-tests/heuristic/results/<YYYY-MM-DD>-heuristic-<domain>-<scope>.md` where
+`<scope>` = `site` | `flow-<slug>` | `screen-<slug>` (create the folder if needed).
 
 ## Step 8 — Deliver
 
@@ -266,8 +269,8 @@ Do **NOT** paste the full report in chat. Show exactly this structure:
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-🔍✅  HEURISTIC REVIEW COMPLETE — <domain>
-📄  Report saved: results/<filename>.md
+🔍✅  HEURISTIC TEST COMPLETE — <domain>
+📄  Report saved: user-simulation-tests/heuristic/results/<filename>.md
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 **Pages inspected:** N · **Findings:** N across M heuristics · **Clean:** K/10 · **Not observable:** J/10

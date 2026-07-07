@@ -1,6 +1,6 @@
 ---
 name: synthetic-autopilot-synthesizer
-description: Synthesizes N synthetic-user simulation runs into one consolidated report, classifying findings by convergence (all users / one role / one pole of a contrasted pair). Invoked by the user-simulation autopilot skill after all runs finish. Do not use directly.
+description: Synthesizes N synthetic-user simulation runs into one consolidated report, classifying findings by convergence (all users / one role / one pole of a contrasted pair). Invoked by the user-simulation simulation-auto skill after all runs finish. Do not use directly.
 tools: Read
 ---
 
@@ -41,7 +41,7 @@ profiles.
 ```markdown
 # Autopilot report — <domain>
 
-> Multi-user synthetic simulation — **user-simulation autopilot**.
+> Multi-user synthetic simulation — **user-simulation · simulation-auto**.
 > **App:** <URL> · **Date:** <YYYY-MM-DD> · **Runs:** <N>
 
 **Business:** <1-2 lines from the business summary>

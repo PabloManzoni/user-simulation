@@ -265,27 +265,30 @@ Its instructions require it to copy every number verbatim. Save the returned Mar
 
 ## Step 8 — Deliver
 
-Do **NOT** paste the full report in chat. Show exactly this structure:
+Do **NOT** paste the report, and do **NOT** paste any findings table in chat. A partial table reads
+as if it were the whole analysis and buries the real deliverable — the full `.md`. The chat message
+exists to say the test finished, give ONE light conclusion, and send the user to the report. Show
+exactly this structure:
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 🔍✅  HEURISTIC TEST COMPLETE — <domain>
-📄  Report saved: user-simulation-tests/heuristic/results/<filename>.md
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-**Pages inspected:** N · **Findings:** N across M heuristics · **Clean:** K/10 · **Not observable:** J/10
+📄  Full analysis → user-simulation-tests/heuristic/results/<filename>.md
+    Open it for the prioritized findings, evidence and per-persona ratings.
 
-**What happened:**
-- <One sentence: the top-priority finding and its score>
-- <One sentence: the sharpest rater divergence — who a finding hurts that the others shrug off>
-- <One sentence: Fix this first — pulled verbatim from the report>
+Inspected N pages · M findings · Clean K/10 · Not observable J/10
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-FINDINGS BY PRIORITY (top rows — full table in the report)
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-<the findings table, top 5-8 rows, Reason column trimmed if needed>
+**Where it fails most:** <heuristic name> (<count>) · <heuristic name> (<count>) · <heuristic name> (<count>)
+**Fix this first:** <the single top-priority fix — one line, verbatim from the report>
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
+
+To fill **Where it fails most**, group the findings by heuristic NAME, count them, and name the
+top 2–3 heuristics by finding count (most-violated first). It is a one-line conclusion, not a list
+of findings — never expand it into a table. The saved `.md` is the deliverable; the chat only points
+to it.
 
 Then drop everything except the report path from working context.
 

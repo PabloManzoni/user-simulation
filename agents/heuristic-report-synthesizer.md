@@ -69,6 +69,8 @@ You do NOT detect, you do NOT re-rate, and you do NOT soften anyone's numbers. Y
 | # | Description | Heuristic | Business | Usability | Priority | Convergence | Reason | Suggested fix |
 |---|---|---|---|---|---|---|---|---|
 <one row per finding, in the received order; Description ≤ 12 words;
+the **Heuristic** column shows the heuristic's full NAME (e.g. "Consistency and standards"), never
+its number — the reader must not have to look up which heuristic a number means;
 Reason = one line combining the expert's business reason with the strongest persona reason>
 
 ## Finding detail
@@ -77,7 +79,7 @@ Reason = one line combining the expert's business reason with the strongest pers
 
 ### <id> — <title> · Priority <X.X>
 
-- **Heuristic:** #<n> <name> <(secondary: #<n> <name>) if any>
+- **Heuristic:** <name> <(secondary: <name>) if any>
 - **Screen(s):** <names>
 - **Evidence:** > "<verbatim quote>" — <screen>
 - **Business impact:** <n> — <expert's one-line reason>

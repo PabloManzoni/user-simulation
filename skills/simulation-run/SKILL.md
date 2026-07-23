@@ -32,7 +32,7 @@ Only show the quick start block below when a preflight check fails and the user 
 >
 > **1. Set up the browser (one time):**
 >    ```
->    claude mcp add playwright -- npx @playwright/mcp@latest
+>    claude mcp add playwright --scope user -- npx @playwright/mcp@latest
 >    npx playwright install chromium
 >    ```
 >    Then restart Claude Code and run `/reload-plugins`.
@@ -69,17 +69,33 @@ back. Do not continue past a failed check under any circumstances, even if the u
 The simulator drives the browser through the **Playwright MCP** server. Check it's available: try to
 load its tools via ToolSearch `select:mcp__playwright__browser_navigate,mcp__playwright__browser_snapshot`.
 
-If the tools are NOT found (the server isn't configured, or this session started before it was added):
+**Not found on the first try?** MCP servers connect asynchronously while the session starts — retry
+the same ToolSearch once before concluding anything.
+
+Still not found → **diagnose before instructing**. Run `claude mcp list` in Bash:
+
+- **`playwright` IS in the list** → it's configured, but this session started before it finished
+  loading. Tell the user to restart Claude Code, then STOP.
+- **`playwright` is NOT in the list** → it isn't configured for this project. The most common cause
+  (even when the user says "but I installed it!") is an install without `--scope user`: that makes
+  the server project-local, so it only exists in the folder where the command was run. Show:
 
 > **⚠️ Setup needed — Playwright browser**
 >
-> The simulator drives the browser through the **Playwright MCP** server, which isn't available yet.
+> The simulator drives the browser through the **Playwright MCP** server, which isn't available in
+> this project.
 >
-> 1. In your terminal, run: `claude mcp add playwright -- npx @playwright/mcp@latest`
-> 2. **Restart Claude Code** — MCP tools only load when the session starts.
-> 3. Tell me when it's back and I'll continue.
+> I can set it up for you right now — I'd run these two commands (`--scope user` makes it work in
+> **all** your projects, so this never comes up again):
+> ```
+> claude mcp add playwright --scope user -- npx @playwright/mcp@latest
+> npx playwright install chromium
+> ```
+> Say the word and I'll run them — or run them yourself in your terminal. Either way, **restart
+> Claude Code afterwards** (MCP tools only load when a session starts) and tell me when you're back.
 
-**STOP here.** Do not proceed without Playwright available.
+With the user's OK, run both commands via Bash and show their output. **STOP here** — never proceed
+without Playwright available.
 
 ### 0b. Profile available?
 
@@ -129,7 +145,9 @@ Wait for the user. Only continue once a real profile is in hand.
 Load the Playwright tools you'll need via ToolSearch (select these by name):
 `mcp__playwright__browser_navigate`, `browser_snapshot`, `browser_click`, `browser_type`,
 `browser_press_key`, `browser_wait_for`, `browser_take_screenshot`.
-Then `browser_navigate` to the URL.
+Then `browser_navigate` to the URL. If navigation fails with a **browser-launch/executable error**
+(not a network error), the MCP server is fine but its browser is missing: offer to run
+`npx playwright install chromium` via Bash, then retry once.
 
 ## Step 3 — Step-by-step loop
 

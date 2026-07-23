@@ -1,7 +1,7 @@
 {
   "name": "user-simulation",
   "displayName": "User Simulation",
-  "version": "4.1.0",
+  "version": "4.1.1",
   "description": "Synthetic UX testing over a live web app, two complementary lenses. EXPERIENCE (simulation): a synthetic user walks the app and reports friction, doubt and emotion — simulation-run (custom: your profile + URL + task) and simulation-auto (inferred: from just a URL it proposes users and consolidates the runs). INSPECTION (heuristics): heuristic-test runs an expert Nielsen heuristic evaluation, severity-rated by three synthetic personas, into a prioritized findings table. Drives the browser via Playwright MCP.",
   "author": {
     "name": "Pablo Manzoni",

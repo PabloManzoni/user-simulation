@@ -36,9 +36,13 @@ using accessibility snapshots (no pixel-guessing).
 **Step 1 — In your terminal:** install the Playwright MCP server and its browser:
 
 ```
-claude mcp add playwright -- npx @playwright/mcp@latest
+claude mcp add playwright --scope user -- npx @playwright/mcp@latest
 npx playwright install chromium
 ```
+
+> `--scope user` matters: it makes Playwright available in **all** your projects. Without it, the
+> install is project-local — it only works in the folder where you ran the command, and the plugin
+> will (correctly) report it as missing everywhere else.
 
 **Step 2 — In Claude Code:** add the plugin source and install:
 

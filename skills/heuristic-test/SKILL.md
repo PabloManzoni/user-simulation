@@ -15,39 +15,46 @@ numbers**. Detection belongs to the `heuristic-expert-evaluator` subagent, ratin
 `heuristic-persona-rater` subagents, and the report to `heuristic-report-synthesizer`. You never
 detect findings yourself and you never adjust a score — you capture, validate, compute, and deliver.
 
-The browser is driven through the **Playwright MCP** server: you perceive each screen with an
-accessibility **snapshot** plus one **screenshot** per screen (evidence for visually-dependent
-heuristics).
+**Browser:** follow `../user-simulation/browser.md` (relative to this skill's base directory) — it
+picks whatever browser is already available, nothing to install, and defines `OPEN`, `READ`, `ACT`,
+`WAIT`, `SHOT`. You perceive each screen with a `READ` (the accessibility **snapshot**) plus one
+`SHOT` per screen when the driver can take one (evidence for visually-dependent heuristics).
 
 This is the **inspection** lens of the `user-simulation` plugin — the sibling of the
 `simulation-run` / `simulation-auto` skills: those simulate how a user *feels*; this one audits
-what the interface *violates*. Reports are always written in **English**.
+what the interface *violates*. Reports are always written in **English**; the action summary in
+the user's language.
 
 ---
 
 ## On launch — run Step 0 checks silently first
 
-Run the Step 0 checks immediately. Do NOT print the quick start unless a check fails. If the checks
-pass and the user already provided URL + mode, start directly. If inputs are missing, ask only for
-the missing ones.
+Run the Step 0 checks immediately. If the user already provided URL + mode (or it's a handoff),
+start directly. If inputs are missing, show the quick start below and ask only for the missing ones.
 
 > **🔍 Heuristic Test — quick start**
-> Run a Nielsen heuristic evaluation over your live web app and get a prioritized findings table.
+> Tell me the app **URL** and the **mode**:
+> · `screen` — one screen (its URL)
+> · `flow` — a specific flow (*"home → contact → submit the form"*)
+> · `site` — crawl the whole site (default cap: 8 pages)
 >
-> **1. Set up the browser (one time):**
->    ```
->    claude mcp add playwright --scope user -- npx @playwright/mcp@latest
->    npx playwright install chromium
->    ```
->    Then restart Claude Code and run `/reload-plugins`.
-> **2. Tell me 2 things** — the app **URL** and the **mode**:
->    · `screen` — evaluate one screen (give me its URL)
->    · `flow` — evaluate a specific flow (describe it: *"home → contact → submit the form"*)
->    · `site` — crawl and evaluate the whole site (default cap: 8 pages)
->
-> Then I'll research the business, build three rater personas, capture the scope, run the expert
-> evaluation, and save an English report with the prioritized findings table in
-> `user-simulation-tests/heuristic/results/`.
+> I'll build three rater personas, run the expert evaluation, and give you a short action summary
+> with a link to the full report in `user-simulation-tests/heuristic/results/`.
+
+## Handoff mode (called from `/user-simulation`)
+
+If the args start with `handoff`, the user already answered everything: take `url`, `scope`
+(`screen` | `flow`), `task` (for a flow: the task in natural language — normalize it into the flow
+script), `date`, `lang`, `deliver`. **Ask nothing.** The defaults that replace every question in
+this skill:
+
+| Question in direct use | Handoff default |
+|---|---|
+| Persona files exist — reuse or regenerate? | Reuse |
+| Confirm the flow script | Don't ask — walk it |
+| Trigger validation errors? | Yes (safety rails still apply) |
+| Flow element not found | Re-`READ` once; still missing → end the capture there and note it in the report meta |
+| Persona gates fail after 2 retries | Use the last attempt and note it in the Method note |
 
 ---
 
@@ -66,47 +73,16 @@ If URL or mode is missing, ask before continuing. Do not invent either.
 
 ## Step 0 — Preflight (HARD STOP — before ANYTHING else)
 
-### 0a. Playwright browser available?
+### 0a. Browser
 
-The evaluator drives the browser through the **Playwright MCP** server. Check it's available: try to
-load its tools via ToolSearch `select:mcp__playwright__browser_navigate,mcp__playwright__browser_snapshot`.
-
-**Not found on the first try?** MCP servers connect asynchronously while the session starts — retry
-the same ToolSearch once before concluding anything.
-
-Still not found → **diagnose before instructing**. Run `claude mcp list` in Bash:
-
-- **`playwright` IS in the list** → it's configured, but this session started before it finished
-  loading. Tell the user to restart Claude Code, then STOP.
-- **`playwright` is NOT in the list** → it isn't configured for this project. The most common cause
-  (even when the user says "but I installed it!") is an install without `--scope user`: that makes
-  the server project-local, so it only exists in the folder where the command was run. Show:
-
-> **⚠️ Setup needed — Playwright browser**
->
-> The evaluator drives the browser through the **Playwright MCP** server, which isn't available in
-> this project.
->
-> I can set it up for you right now — I'd run these two commands (`--scope user` makes it work in
-> **all** your projects, so this never comes up again):
-> ```
-> claude mcp add playwright --scope user -- npx @playwright/mcp@latest
-> npx playwright install chromium
-> ```
-> Say the word and I'll run them — or run them yourself in your terminal. Either way, **restart
-> Claude Code afterwards** (MCP tools only load when a session starts) and tell me when you're back.
-
-With the user's OK, run both commands via Bash and show their output. **STOP here** — never proceed
-without Playwright available.
+Pick the driver per `browser.md` §1 (silently, one line). Never ask the user to install anything.
 
 ### 0b. Reachability
 
-Load the Playwright tools you'll need via ToolSearch: `browser_navigate`, `browser_snapshot`,
-`browser_click`, `browser_type`, `browser_press_key`, `browser_wait_for`, `browser_take_screenshot`.
-Then `browser_navigate` to the URL and capture one snapshot. If navigation fails (DNS, timeout,
-blank page): show the error and **STOP**. A technical failure is never a finding. Exception worth
-one retry: a **browser-launch/executable error** means the MCP server is fine but its browser is
-missing — offer to run `npx playwright install chromium` via Bash, then retry once.
+`OPEN(url)` and `READ()` once. If navigation fails (DNS, timeout, blank page): show the error and
+**STOP** — a technical failure is never a finding. If the app is client-rendered and the driver is
+read-only, show `browser.md` §4 and STOP. In read-only mode, flows that need forms are captured up to
+the first form (note it in the report meta).
 
 ---
 
@@ -115,7 +91,7 @@ missing — offer to run `npx playwright install chromium` via Bash, then retry 
 If `user-simulation-tests/heuristic/personas/<domain>-power.md`,
 `user-simulation-tests/heuristic/personas/<domain>-average.md` and
 `user-simulation-tests/heuristic/personas/<domain>-low-literacy.md` already exist (domain = host
-without TLD), ask: **reuse or regenerate?** On reuse, load the business summary from
+without TLD), ask: **reuse or regenerate?** (handoff: reuse) On reuse, load the business summary from
 `user-simulation-tests/heuristic/personas/<domain>.research.md` and skip to Step 3.
 
 Otherwise: navigate the home page plus up to 2 more pages (pricing / about / a primary workflow
@@ -145,8 +121,8 @@ profiles to `user-simulation-tests/heuristic/personas/<slug>.md`. Never overwrit
 
 Every captured state becomes an entry in the **screen registry**:
 `{ screenId, url, stateLabel, oneLiner, screenshotPath }`, plus a **trimmed snapshot** held in a
-buffer. Also capture one screenshot per state via `browser_take_screenshot`
-(filename `<screenId>.png`) and record the returned path.
+buffer. Also capture one screenshot per state via `SHOT(<screenId>)` and record the returned path
+(no path when the driver can't save screenshots — heuristic 8 then follows its no-screenshot rule).
 
 **Trimming rules** (apply to every snapshot before buffering, in this order):
 
@@ -175,12 +151,13 @@ Ask once at confirmation (if not already answered): *"Also trigger validation er
 default: yes.
 
 Then walk the script deterministically: snapshot → locate the target element by its label in the
-snapshot → act via `browser_click` / `browser_type` / `browser_press_key` (using the element's `ref`
-from the current snapshot) → `browser_wait_for` the expected signal (text appearing or
-disappearing — never a guessed sleep) → snapshot + screenshot the resulting state → trim + register.
+snapshot → `ACT` on it (click / type / key, using the element's `ref` from the current `READ`) →
+`WAIT` for the expected signal (text appearing or disappearing — never a guessed sleep) → `READ` +
+`SHOT` the resulting state → trim + register.
 
 - If a declared element does not exist in the snapshot: **STOP and ask** — in an inspection this is
-  a script error to fix, not friction to record (the inverse of the simulation rule).
+  a script error to fix, not friction to record (the inverse of the simulation rule). In handoff
+  mode, use the handoff default instead.
 - **Error probing** (when opted in): at each form, first submit empty/invalid and register the
   error state as an extra entry (`stateLabel: "error"`), then fill correctly and continue.
 - **Safety rails:** never probe or complete forms with destructive, payment, or irreversible
@@ -285,32 +262,26 @@ Its instructions require it to copy every number verbatim. Save the returned Mar
 
 ## Step 8 — Deliver
 
-Do **NOT** paste the report, and do **NOT** paste any findings table in chat. A partial table reads
-as if it were the whole analysis and buries the real deliverable — the full `.md`. The chat message
-exists to say the test finished, give ONE light conclusion, and send the user to the report. Show
-exactly this structure:
+- **`deliver=none`** (handoff inside a combined run): print one line —
+  `✔ Heuristic review done — M findings` — and return the report path to the caller. Stop here.
+- Otherwise spawn the `summary-synthesizer` subagent (Agent tool,
+  `subagent_type: "summary-synthesizer"`) passing as text: `LANGUAGE` (handoff `lang`, else the
+  conversation's language), `META` (url, domain, date, test=heuristic, scope + task, driver),
+  `USERS` (none), `REPORTS` (`heuristicPath`), `LINK_BASE: user-simulation-tests/` — paths relative
+  to it. Save the reply to `user-simulation-tests/<YYYY-MM-DD>-<domain>-heuristic-summary.md` and
+  show exactly:
 
 ```
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-🔍✅  HEURISTIC TEST COMPLETE — <domain>
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✅ Done — <domain>
 
-📄  Full analysis → user-simulation-tests/heuristic/results/<filename>.md
-    Open it for the prioritized findings, evidence and per-persona ratings.
+<the summary, verbatim>
 
-Inspected N pages · M findings · Clean K/10 · Not observable J/10
-
-**Where it fails most:** <heuristic name> (<count>) · <heuristic name> (<count>) · <heuristic name> (<count>)
-**Fix this first:** <the single top-priority fix — one line, verbatim from the report>
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📄 Summary saved: user-simulation-tests/<filename>
 ```
 
-To fill **Where it fails most**, group the findings by heuristic NAME, count them, and name the
-top 2–3 heuristics by finding count (most-violated first). It is a one-line conclusion, not a list
-of findings — never expand it into a table. The saved `.md` is the deliverable; the chat only points
-to it.
-
-Then drop everything except the report path from working context.
+Do **NOT** paste the full report or its findings table in chat — the summary's mini tables are the
+quick read and they link to the full `.md`. Then drop everything except the paths from working
+context.
 
 ---
 
@@ -318,7 +289,7 @@ Then drop everything except the report path from working context.
 
 | Failure | Policy |
 |---|---|
-| Playwright MCP missing | Step 0a: setup block + HARD STOP |
+| No browser can see the app | `browser.md` §4 message + STOP |
 | Site unreachable | Step 0b: show error, STOP; never a finding |
 | Expert returns malformed JSON | 1 retry appending the parse error + "return ONLY valid JSON". 2nd failure → STOP with a technical-failure message |
 | Expert entries invalid (heuristic ∉ 1–10, businessImpact ∉ {1,2,3}, unknown screenId, empty evidence) | 1 corrective retry naming the offending ids; still invalid → drop those findings, note it in the report meta |
@@ -344,7 +315,8 @@ Then drop everything except the report path from working context.
 - **"Clean" ≠ "not observable".** Preserve the distinction through every hop — it is the
   framework's honesty mechanism.
 - **Context hygiene:** research snapshots die at Step 1; scope snapshots die at Step 4 (after the
-  expert call); rater raw replies die at Step 6; after Step 8 only the report path survives.
+  expert call); rater raw replies die at Step 6; after Step 8 only the report paths survive.
 - **Never a silent truncation.** Cap hits, login walls, dropped raters, dropped findings — all of
   it surfaces in the report meta.
 - Reports and personas are always written in **English**, regardless of the conversation language.
+  The action summary is written in the user's language.

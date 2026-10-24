@@ -9,7 +9,7 @@
     {
       "name": "user-simulation",
       "source": "./",
-      "description": "Synthetic UX testing over a live web app: simulate a user's experience (simulation-run / simulation-auto) or run an expert Nielsen heuristic evaluation (heuristic-test).",
+      "description": "Synthetic UX testing over a live web app with one command: \"user simulation\" + a URL, 3 quick questions, and a one-page action summary. Simulates inferred or custom users and/or runs an expert Nielsen heuristic review. No setup required.",
       "author": {
         "name": "Pablo Manzoni"
       }

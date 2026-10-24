@@ -142,7 +142,7 @@ An MCP browser captures the scope; you run the expert prompt over it screen by s
 The full protocol: research → persona generation → scope capture → forced-enumeration detection → independent rating → deterministic priority → report.
 
 **Advantages:** reproducible, complete protocol, comparable across runs and versions.
-**Limitations:** requires the Playwright MCP setup; bounded by what the captured scope contains.
+**Limitations:** needs a browser the agent can drive (built-in, Claude in Chrome or Playwright MCP — read-only fetch covers static pages); bounded by what the captured scope contains.
 
 The report's Method note describes the protocol that ran (mode C when produced by this plugin).
 

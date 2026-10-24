@@ -1,192 +1,109 @@
 ---
 name: simulation-run
-description: Runs a synthetic user over a live web app to evaluate UX step by step (action, clarity, doubt, emotion, memory) and produces a report — the custom simulation mode: you know which type of user you want to test, so you provide the profile, the URL and the task. Use when the user wants to simulate a profile over an app/URL, test usability, or types /user-simulation:simulation-run.
+description: Runs a synthetic user over a live web app to evaluate UX step by step (action, clarity, doubt, emotion, memory) and produces a report — the custom simulation mode: you know which type of user you want to test, so you provide the profile, the URL and the task (or a single screen). Use when the user wants to simulate their own profile over an app/URL, or types /user-simulation:simulation-run.
 ---
 
-# User simulation
+# User simulation — your own user
 
 You orchestrate a **synthetic user simulation** over a **live web app**: a profile receives
 a task, navigates the app clicking toward that goal, and each step records what they do,
-how clear it was, their doubts and emotions. At the end, it produces a UX report.
+how clear it was, their doubts and emotions. At the end, it produces a UX report and a short
+action summary.
 
 You (the main orchestrating agent) **manage the browser and run the loop**.
 Each screen decision is made by a **simulator subagent** with clean context, and
 the final report is built by a **synthesis subagent**. You never choose the path —
 you only mechanically execute the intent the simulator already declared.
 
-The browser is driven through the **Playwright MCP** server: you perceive each screen with an
-accessibility **snapshot** (exact text, roles, states, and a `ref` per element) and act on elements
-by their `ref` — not by pixel coordinates.
+**Browser:** follow `../user-simulation/browser.md` (relative to this skill's base directory). It
+picks whatever browser is already available — nothing to install — and defines the operations used
+below: `OPEN`, `READ`, `ACT`, `WAIT`, `SHOT`.
 
 ---
 
-## On launch — run Step 0 checks silently first
+## Handoff mode (called from `/user-simulation`)
 
-Run the Step 0 checks immediately. Do NOT print the quick start unless a check fails.
-If both checks pass and the user already provided the 3 required inputs, start the simulation directly.
-If both checks pass but inputs are missing, ask for the missing ones only (profile / URL / task).
-Only show the quick start block below when a preflight check fails and the user needs setup guidance.
+If the args start with `handoff`, the user already answered everything in the quick start: take
+`url`, `scope`, `task`, `profile`, `date`, `lang`, `deliver` from them, **ask nothing**, and skip
+straight to Step 1. Role-task mismatches are noted in the report instead of asked (see Step 1).
 
-> **🧪 User Simulation — quick start**
-> Run a synthetic user through your live web app and get a UX report.
->
-> **1. Set up the browser (one time):**
->    ```
->    claude mcp add playwright --scope user -- npx @playwright/mcp@latest
->    npx playwright install chromium
->    ```
->    Then restart Claude Code and run `/reload-plugins`.
-> **2. Get a profile** — build your synthetic user at **https://synthetic.tuggsy.com/**, download the `.md`, and drop it into `user-simulation-tests/simulation/profiles/` *(or skip this: `/user-simulation:simulation-auto` infers and builds the users for you from just the URL)*.
-> **3. Tell me 3 things** — the profile, the app URL, and the task to test (e.g. *"create a raffle and pick a winner"*).
->
-> Then I'll open the app, walk it screen by screen as that user, and save an English report in `user-simulation-tests/simulation/results/`.
-
----
-
-## Required inputs (all 3 are mandatory)
+## Required inputs (direct use)
 
 1. **Profile** — a synthetic user in `.md` (file path or pasted). Must have at least:
    functional role, explicit goal, behavior rules, abandonment rules, forbidden assumptions.
-2. **URL** — the live web app to evaluate (already running).
-3. **Task** — the thing to accomplish, in natural language (e.g. *"check the alerts"*).
+2. **URL** — the live web app to evaluate.
+3. **Task** — the thing to accomplish, in natural language (e.g. *"check the alerts"*) — **or**
+   `screen` to evaluate only the screen at the URL.
 
-If any of the three is missing, ask for it before continuing. Do not invent any.
+Ask only for what's missing, in one message. Do not invent any of them.
 
----
+### Profile available? (HARD STOP)
 
-## Step 0 — Preflight checks (HARD STOP — do these before ANYTHING else)
+A profile counts as available ONLY if: there is a `.md` in
+`user-simulation-tests/simulation/profiles/`, **or** the user gave a path, **or** pasted one.
+**Actually check** the folder. If none, STOP and show:
 
-These checks gate the entire skill. Until BOTH pass, you must NOT open the app, navigate, capture
-snapshots, spawn subagents, or evaluate any screen. **Running the simulation without a confirmed
-profile is a failure.** Never start "reviewing" the app on your own initiative, and never substitute
-a default, example, or invented profile.
+> **🛑 I need a synthetic user to act as.**
+> Build one at **https://synthetic.tuggsy.com/**, download the `.md` and drop it in
+> `user-simulation-tests/simulation/profiles/` (or paste it here).
+> *No profile? Say "user simulation" and I'll infer the users for you.*
 
-Run the checks in order. If either fails, show its block and **STOP** — wait for the user to come
-back. Do not continue past a failed check under any circumstances, even if the user just said "run".
-
-### 0a. Playwright browser available?
-
-The simulator drives the browser through the **Playwright MCP** server. Check it's available: try to
-load its tools via ToolSearch `select:mcp__playwright__browser_navigate,mcp__playwright__browser_snapshot`.
-
-**Not found on the first try?** MCP servers connect asynchronously while the session starts — retry
-the same ToolSearch once before concluding anything.
-
-Still not found → **diagnose before instructing**. Run `claude mcp list` in Bash:
-
-- **`playwright` IS in the list** → it's configured, but this session started before it finished
-  loading. Tell the user to restart Claude Code, then STOP.
-- **`playwright` is NOT in the list** → it isn't configured for this project. The most common cause
-  (even when the user says "but I installed it!") is an install without `--scope user`: that makes
-  the server project-local, so it only exists in the folder where the command was run. Show:
-
-> **⚠️ Setup needed — Playwright browser**
->
-> The simulator drives the browser through the **Playwright MCP** server, which isn't available in
-> this project.
->
-> I can set it up for you right now — I'd run these two commands (`--scope user` makes it work in
-> **all** your projects, so this never comes up again):
-> ```
-> claude mcp add playwright --scope user -- npx @playwright/mcp@latest
-> npx playwright install chromium
-> ```
-> Say the word and I'll run them — or run them yourself in your terminal. Either way, **restart
-> Claude Code afterwards** (MCP tools only load when a session starts) and tell me when you're back.
-
-With the user's OK, run both commands via Bash and show their output. **STOP here** — never proceed
-without Playwright available.
-
-### 0b. Profile available?
-
-A synthetic user profile is **required** — it's the user you act as; with no profile there is
-literally nothing to simulate. A profile counts as available ONLY if one of these is true:
-
-- there is at least one `.md` file inside a `user-simulation-tests/simulation/profiles/` folder in the current working directory, **or**
-- the user gave you a file path to a profile `.md`, **or**
-- the user pasted a full profile into the chat.
-
-**Actually check** — list the `user-simulation-tests/simulation/profiles/` folder; don't assume. If none of the three is true,
-**STOP immediately** and show exactly this. Do not open the app, do not start any step, and do not
-invent or reuse an example profile:
-
-> **🛑 I can't run yet — there's no synthetic user profile.**
->
-> A profile is the user I'm supposed to act as. Without one there's nothing to simulate, so I'm
-> stopping here on purpose.
->
-> **Do this first:**
-> 1. Create a profile at **https://synthetic.tuggsy.com/**
-> 2. Download the `.md` and drop it into a **`user-simulation-tests/simulation/profiles/`** folder in this project
->    *(or paste it here in the chat, or give me the file path).*
-> 3. Tell me when it's ready — then I'll ask for the app URL and the task, and start.
->
-> *Don't want to build a profile? `/user-simulation:simulation-auto` infers who likely uses your site
-> from just the URL, proposes the users, and builds the profiles for you.*
-
-Wait for the user. Only continue once a real profile is in hand.
+Never substitute a default, example, or invented profile.
 
 ---
 
 ## Step 1 — Prepare
 
 - Read the full profile (if it's a path, use Read). Confirm it has the minimum sections.
+- **Screen scope** (`scope=screen` or task `screen`/`infer`): set the task to *"Look at this screen
+  and do what you came here to do"* framed by the profile's explicit goal, and set the step cap to
+  **3**. The run also stops as soon as an action leaves the screen (a new URL / different page):
+  record it as **Goal reached — would continue**.
 - **Role-task fit check**: compare the task against the profile's "Suitable task types" and
-  "Unsuitable task types" sections. If the task clearly matches an unsuitable type (e.g. an admin
-  configuration task given to an end-user profile), warn the user BEFORE running — a mismatched
-  pair produces a report that looks valid but measures nothing real. Show which unsuitable type it
-  matches and ask: run it anyway, or fix the pairing (different task or different profile). Proceed
-  only with explicit confirmation; if they confirm, note the mismatch in the report header.
-- Set the **step cap** (anti-loop safety net). Default: **15**. The user can change it.
+  "Unsuitable task types". On a clear mismatch: in direct use, warn and ask (run anyway / change
+  task or profile); in handoff mode, run anyway. Either way note the mismatch in the report header.
+- Set the **step cap** (anti-loop safety net). Default: **15** (3 in screen scope).
 - Initialize an empty `steps` list and `memory = null` (memory only exists from step 2 onward).
 
 ## Step 2 — Open the app
 
-Load the Playwright tools you'll need via ToolSearch (select these by name):
-`mcp__playwright__browser_navigate`, `browser_snapshot`, `browser_click`, `browser_type`,
-`browser_press_key`, `browser_wait_for`, `browser_take_screenshot`.
-Then `browser_navigate` to the URL. If navigation fails with a **browser-launch/executable error**
-(not a network error), the MCP server is fine but its browser is missing: offer to run
-`npx playwright install chromium` via Bash, then retry once.
+Pick the driver per `browser.md` §1 (once per session) and `OPEN(url)`. If the app can't be seen,
+show `browser.md` §4 and STOP.
 
 ## Step 3 — Step-by-step loop
 
 Repeat until a stop condition is met. Each iteration:
 
-  **a. Perceive**: capture a `browser_snapshot` — the accessibility tree with exact text, element
-     roles, states (e.g. `[disabled]`, `[checked]`), and a `ref` for each element. This IS the
-     screen's visible content. Optionally also `browser_take_screenshot` when visual layout matters
-     as report evidence; the snapshot alone is enough to decide and act.
+  **a. Perceive**: `READ()` — exact text, element roles, states (e.g. `[disabled]`, `[checked]`), and
+     a `ref` per element. This IS the screen's visible content. Optionally `SHOT()` when visual
+     layout matters as report evidence; the `READ` alone is enough to decide and act.
 
   **b. Decide**: spawn the `synthetic-screen-evaluator` subagent (Agent tool, `subagent_type: "synthetic-screen-evaluator"`)
      passing, as text:
        - the **full profile**
        - the **task** (the goal)
        - the **screen name/position** (e.g. "Current screen, step N")
-       - the **visible content** of the screen (the snapshot from step a, as readable text)
+       - the **visible content** of the screen (from step a, as readable text)
        - the **memory** from the previous step (omit on step 1)
      The subagent returns ONLY a JSON:
      `{ action, clarityLevel, doubtDetected, reason, abandoned, estimatedTimeSeconds, emotionalState, memory }`.
 
-  **c. Record** the step (number, screen, snapshot, and the full returned JSON).
+  **c. Record** the step (number, screen, and the full returned JSON).
 
   **d. Check stop conditions** (in this order):
        - `abandoned == true` → stop (the user gives up here).
        - the `action` indicates the **goal was reached** (arrived at the screen/state where
          the task would be resolved) → stop with success.
+       - screen scope and the action leaves the screen → stop with *Goal reached — would continue*.
        - step count `>= cap` → stop as safety net (mark as "cap reached").
      If stopped, exit the loop.
 
-  **e. Execute**: translate the declared `action` into a real Playwright action, using the `ref` from
-     the current snapshot:
-       - click → `browser_click` (`target` = the element's `ref`; `element` = a human-readable description)
-       - type → `browser_type` (`target` = ref, `text`, and `submit: true` to press Enter after)
-       - press a key → `browser_press_key`
-     For anything that **animates or loads** (spinners, transitions, async results), use
-     `browser_wait_for` (wait for the expected text to appear, or `textGone` for it to disappear) —
-     wait for the *signal*, not a guessed number of seconds. If the element the simulator named
-     **doesn't exist** in the snapshot, do not fix it or look for alternatives — let the next step
-     perceive it as real friction.
+  **e. Execute**: translate the declared `action` into `ACT` on the `ref` from the current `READ`
+     (click / type with submit / press key). For anything that **animates or loads**, `WAIT` for the
+     signal, never a guessed number of seconds. If the element the simulator named **doesn't
+     exist**, do not fix it or look for alternatives — let the next step perceive it as real
+     friction. In read-only mode, a non-executable action ends the run as **Read-only limit**
+     (`browser.md` §3) — never as an abandonment.
 
   **f. Pass memory**: `memory = memory` returned. Goes to the next step.
 
@@ -197,42 +114,38 @@ Spawn the `synthetic-flow-synthesizer` subagent (`subagent_type: "synthetic-flow
 
 ## Step 5 — Deliver
 
-1. Save the report to `user-simulation-tests/simulation/results/<YYYY-MM-DD>-<profile-slug>.md` (create the folder if it doesn't exist).
-2. Do **NOT** paste the full report in chat. Instead, show exactly this structure:
+1. Save the report to `user-simulation-tests/simulation/results/<YYYY-MM-DD>-<profile-slug>.md`
+   (create the folder if it doesn't exist).
+2. **`deliver=none`** (handoff inside a combined run): print one line —
+   `✔ Simulation done — <profile-slug>: <Result> (N steps)` — and return to the caller with
+   `{ label: "U1", role, result, steps, reportPath, profilePath }`. Stop here.
+3. Otherwise spawn the `summary-synthesizer` subagent (`subagent_type: "summary-synthesizer"`)
+   passing as text: `LANGUAGE` (handoff `lang`, else the conversation's language), `META` (url,
+   domain, date, test=simulation, users=own, scope + task, driver), `USERS` (the one user as U1),
+   `REPORTS` (none besides the user report), `LINK_BASE: user-simulation-tests/` — paths relative
+   to it. Save the reply to `user-simulation-tests/<YYYY-MM-DD>-<domain>-<profile-slug>-summary.md`
+   and show exactly:
 
 ```
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-✅  SIMULATION COMPLETE
-📄  Report saved: user-simulation-tests/simulation/results/<filename>.md
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✅ Done — <domain>
 
-**Result:** <Goal reached / Abandoned at step N / Step cap reached>
-**Steps:** N · **~Xs total**
+<the summary, verbatim>
 
-**What happened:**
-- <One sentence: where was friction highest and why>
-- <One sentence: how trust/confidence evolved across the run>
-- <One sentence: Fix this first — pulled verbatim from the report>
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-POTENTIAL IMPROVEMENTS
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-<Pull the Potential improvements table from the report and show it here>
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📄 Summary saved: user-simulation-tests/<filename>
 ```
+
+Do **NOT** paste the full report in chat — the summary links to it.
 
 ---
 
 ## Orchestrator rules
 
-- **Profile + Playwright first, no exceptions.** Never open the app, navigate, snapshot, spawn a
-  subagent, or evaluate a screen until Step 0 has passed — a real profile is in hand AND Playwright
-  is available. If the user says "just run it" without a profile, STOP and ask; do not improvise,
-  default to, or reuse an example profile.
+- **Profile first, no exceptions.** Never open the app or spawn a subagent until a real profile is
+  in hand. If the user says "just run it" without a profile, STOP and ask; never improvise one.
 - **Don't steer the path.** You only execute the intent the simulator declared. Don't choose
   what to click "to move forward."
-- **Act by `ref`, not by guessing.** Always click/type using the `ref` from the latest snapshot.
-  Re-snapshot after each action so refs are fresh.
+- **Act by `ref`, not by guessing.** Always use the `ref` from the latest `READ`, and re-`READ` after
+  each action so refs are fresh.
 - **Don't give the simulator extra context.** It only receives profile + current screen + its memory.
   None of your knowledge about the project, framework, or future screens.
 - **Prototype-aware**: the simulator already distinguishes dummy data noise from flow friction — don't
